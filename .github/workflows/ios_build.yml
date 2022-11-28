@@ -3,7 +3,7 @@ name: CD - iOS Build
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
+      distribution:
         description: 'Distribution'
         required: true
         default: 'none'
