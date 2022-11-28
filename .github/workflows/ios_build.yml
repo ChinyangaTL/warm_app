@@ -1,6 +1,16 @@
 name: CD - iOS Build
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Distribution'
+        required: true
+        default: 'none'
+        type: choice
+        options:
+          - none
+          - AppCenter
 
 jobs:
   ios-build:
@@ -59,3 +69,13 @@ jobs:
           certificate-password: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
           workspace-path: ios/WarmApp.xcworkspace
           scheme: WarmApp
+
+      - name: Upload artefact to App Center
+        if: ${{ inputs.distribution }} == 'AppCenter'
+        uses: wzieba/AppCenter-Github-Action@v1.3.3
+        with:
+          appName: ${{ 'WarmApp/PROD_iOS' }}
+          token: ${{ secrets.APP_CENTER_TOKEN_PROD_IOS }}
+          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          notifyTesters: false
+          debug: false

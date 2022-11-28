@@ -1,6 +1,16 @@
 name: CD - Android Build
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      distribution:
+        description: 'Distribution'
+        required: true
+        default: 'none'
+        type: choice
+        options:
+          - none
+          - AppCenter
 
 jobs:
   android-build:
@@ -59,3 +69,13 @@ jobs:
           alias: ${{ secrets.ANDROID_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: Upload artefact to App Center
+        if: ${{ inputs.distribution }} == 'AppCenter'
+        uses: wzieba/AppCenter-Github-Action@v1.3.3
+        with:
+          appName: ${{ 'WarmApp/PROD_Android' }}
+          token: ${{ secrets.APP_CENTER_TOKEN_PROD_ANDROID }}
+          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          notifyTesters: false
+          debug: false
