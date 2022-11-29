@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Warm</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">YJFei9FfANmPfrLFPy_xJYiIpGQLV_9XRKywE</string>
 </resources>
