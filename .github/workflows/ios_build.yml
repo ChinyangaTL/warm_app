@@ -74,8 +74,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: App.ipa
-          path: 'output.ipa'
+          name: ${{ 'output.ipa' }}
+          path: ${{ 'output.ipa' }}
 
   distribute-ios:
     needs: ios-build
@@ -85,7 +85,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-          name: App.ipa
+          name: ${{ 'output.ipa' }}
 
       - name: Upload artefact to App Center
         if: ${{ inputs.distribution }} == 'AppCenter'
@@ -93,7 +93,7 @@ jobs:
         with:
           appName: ${{ 'WarmApp/PROD_iOS' }}
           token: ${{ secrets.APP_CENTER_TOKEN_PROD_IOS }}
-          file: App.ipa
+          file: ${{ 'output.ipa' }}
           group: ${{ 'Collaborators' }}
           notifyTesters: true
           debug: false
