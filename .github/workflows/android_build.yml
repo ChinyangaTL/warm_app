@@ -77,5 +77,6 @@ jobs:
           appName: ${{ 'WarmApp/PROD_Android' }}
           token: ${{ secrets.APP_CENTER_TOKEN_PROD_ANDROID }}
           file: ${{ steps.sign_app.outputs.signedReleaseFile }}
-          notifyTesters: false
+          group: ${{ 'Collaborators' }}
+          notifyTesters: true
           debug: false

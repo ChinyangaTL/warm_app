@@ -77,5 +77,6 @@ jobs:
           appName: ${{ 'WarmApp/PROD_iOS' }}
           token: ${{ secrets.APP_CENTER_TOKEN_PROD_IOS }}
           file: ${{ steps.sign_app.outputs.signedReleaseFile }}
-          notifyTesters: false
+          group: ${{ 'Collaborators' }}
+          notifyTesters: true
           debug: false
