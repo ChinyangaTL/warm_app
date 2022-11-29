@@ -70,13 +70,23 @@ jobs:
           workspace-path: ios/WarmApp.xcworkspace
           scheme: WarmApp
 
+  distribute-ios:
+    needs: ios-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: YourApp.ipa
+
       - name: Upload artefact to App Center
         if: ${{ inputs.distribution }} == 'AppCenter'
         uses: wzieba/AppCenter-Github-Action@v1.3.3
         with:
           appName: ${{ 'WarmApp/PROD_iOS' }}
           token: ${{ secrets.APP_CENTER_TOKEN_PROD_IOS }}
-          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          file: YourApp.ipa
           group: ${{ 'Collaborators' }}
           notifyTesters: true
           debug: false
