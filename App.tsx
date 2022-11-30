@@ -1,5 +1,6 @@
 import React from 'react';
 import {SafeAreaView, StyleSheet, Text} from 'react-native';
+import CodePush from 'react-native-code-push';
 
 const App = () => {
   return (
@@ -17,4 +18,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default CodePush({
+  updateDialog: true,
+  installMode: CodePush.InstallMode.IMMEDIATE,
+})(App);
