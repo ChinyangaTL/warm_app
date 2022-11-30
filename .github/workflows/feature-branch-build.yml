@@ -40,12 +40,46 @@ jobs:
 
       - name: Set config for the branch on AppCenter
         if: ${{ steps.check-config.outputs.code == 404 }}
+        id: set-config
         run: |
-          curl -X 'POST' \
-            'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/config' \
-            -H 'accept: application/json' \
-            -H 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-            -H 'Content-Type: application/json' \
-            -d '{
-              "cloneFromBranch": "main"
-            }'
+          CODE=`curl --write-out '%{http_code}' \
+              --silent \
+              --output /dev/null \
+              --request POST \
+              --header 'accept: application/json' \
+              --header 'Content-Type: application/json' \    
+              --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ $GITHUB_REF_NAME }}/config' \
+              --data {
+                "cloneFromBranch": "main"
+                }`
+
+          if [ $CODE = 200 ]
+          then
+            echo $CODE
+            echo "::set-output name=code::$CODE"
+          else
+            echo "CAN'T CHECK IF EXISTS CONFIG"
+            exit 1
+          fi
+
+      - name: Run Android build on AppCenter
+        id: android-build
+        run: |
+          CODE=`curl --write-out '%{http_code}' \
+              --silent \
+              --output /dev/null \
+              --request POST \
+              --header 'accept: application/json' \
+              --header 'Content-Type: application/json' \    
+              --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ $GITHUB_REF_NAME }}/builds'`
+
+          if [ $CODE = 200 ]
+          then
+            echo $CODE
+            echo "::set-output name=code::$CODE"
+          else
+            echo "CAN'T RUN BUILD ON APPCENTER"
+            exit 1
+          fi
