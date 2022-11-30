@@ -42,9 +42,9 @@ jobs:
 
           if [ $CODE = 200 ] || [ $CODE = 404 ]
           then
-            echo $CODE
             echo "::set-output name=code::$CODE"
           else
+            echo $CODE
             echo "CAN'T CHECK IF EXISTS CONFIG FOR ANDROID"
             exit 1
           fi
@@ -67,9 +67,9 @@ jobs:
 
           if [ $CODE = 200 ]
           then
-            echo $CODE
             echo "::set-output name=code::$CODE"
           else
+            echo $CODE
             echo "CAN'T SET CONFIG FOR ANDROID"
             exit 1
           fi
@@ -88,9 +88,9 @@ jobs:
 
           if [ $CODE = 200 ] || [ $CODE = 404 ]
           then
-            echo $CODE
             echo "::set-output name=code::$CODE"
           else
+            echo $CODE
             echo "CAN'T CHECK IF EXISTS CONFIG FOR IOS"
             exit 1
           fi
@@ -113,9 +113,9 @@ jobs:
 
           if [ $CODE = 200 ]
           then
-            echo $CODE
             echo "::set-output name=code::$CODE"
           else
+            echo $CODE
             echo "CAN'T SET CONFIG FOR IOS"
             exit 1
           fi
@@ -135,9 +135,9 @@ jobs:
 
           if [ $CODE = 200 ]
           then
-            echo $CODE
             echo "::set-output name=code::$CODE"
           else
+            echo $CODE
             echo "CAN'T RUN ANDROID BUILD ON APPCENTER"
             exit 1
           fi
@@ -157,9 +157,9 @@ jobs:
 
           if [ $CODE = 200 ]
           then
-            echo $CODE
             echo "::set-output name=code::$CODE"
           else
+            echo $CODE
             echo "CAN'T RUN IOS BUILD ON APPCENTER"
             exit 1
           fi
