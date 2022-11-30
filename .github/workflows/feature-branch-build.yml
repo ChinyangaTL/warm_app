@@ -2,6 +2,9 @@ name: Feature/Fix Branch Build
 
 on: workflow_dispatch
 
+env:
+  BRANCH: ${GITHUB_REF##*/}
+
 jobs:
   build:
     name: Feature/Fix Branch Build
@@ -9,4 +12,4 @@ jobs:
 
     steps:
       - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/}
+        run: echo running on branch $BRANCH
