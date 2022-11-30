@@ -21,13 +21,11 @@ jobs:
       - name: Check if exists config for the branch on AppCenter
         id: check-config
         run: |
-          CODE=`curl --write-out '%{http_code}' \
-              --silent \
-              --output /dev/null \
-              --request GET \
-              --header 'accept: application/json' \
-              --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/config'`
+          CODE=`curl --write-out '%{http_code}' -X 'GET' \
+            'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/config' \
+            -H 'accept: application/json' \
+            -H 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+            -H 'Content-Type: application/json'`
 
           if [ $CODE = 200 ] || [ $CODE = 404 ]
           then
@@ -42,17 +40,14 @@ jobs:
         if: ${{ steps.check-config.outputs.code == 404 }}
         id: set-config
         run: |
-          CODE=`curl --write-out '%{http_code}' \
-              --silent \
-              --output /dev/null \
-              --request POST \
-              -H 'accept: application/json' \
-              -H 'Content-Type: application/json' \    
-              -H 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/config' \
-              --data {
-                "cloneFromBranch": "main"
-                }`
+          CODE=`curl --write-out '%{http_code}' -X 'POST' \
+            'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/config' \
+            -H 'accept: application/json' \
+            -H 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "cloneFromBranch": "main"
+            }'`
 
           if [ $CODE = 200 ]
           then
@@ -66,14 +61,11 @@ jobs:
       - name: Run Android build on AppCenter
         id: android-build
         run: |
-          CODE=`curl --write-out '%{http_code}' \
-              --silent \
-              --output /dev/null \
-              --request POST \
-              --header 'accept: application/json' \
-              --header 'Content-Type: application/json' \    
-              --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/builds'`
+          CODE=`curl --write-out '%{http_code}' -X 'POST' \
+            'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/builds' \
+            -H 'accept: application/json' \
+            -H 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+            -H 'Content-Type: application/json'`        
 
           if [ $CODE = 200 ]
           then
