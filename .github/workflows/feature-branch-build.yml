@@ -47,5 +47,5 @@ jobs:
             -H 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
             -H 'Content-Type: application/json' \
             -d '{
-              "cloneFromBranch": "main",
-          }'
+              "cloneFromBranch": "main"
+            }'
