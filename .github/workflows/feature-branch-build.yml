@@ -16,7 +16,8 @@ jobs:
       - name: Branch name
         run: echo running on branch $GITHUB_REF_NAME
 
-      - name: Build Android
+      - name: Check if exists config for the branch on AppCenter
+        id: check-config
         run: |
           CODE=`curl --write-out '%{http_code}' \
               --silent \
@@ -26,4 +27,14 @@ jobs:
               --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
               --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/config'`
 
-          echo $CODE
+          if [ $CODE = 200 ] || [ $CODE = 404 ]
+          then
+            echo $CODE
+            echo "::set-output name=code::$CODE"
+          else
+            echo "CAN'T CHECK IF EXISTS CONFIG"
+            exit 1
+          fi
+
+      - name: Check outputs
+        run: echo ${{ steps.check-config.outputs.code }}
