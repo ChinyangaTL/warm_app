@@ -49,7 +49,7 @@ jobs:
               --header 'accept: application/json' \
               --header 'Content-Type: application/json' \    
               --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ $GITHUB_REF_NAME }}/config' \
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/config' \
               --data {
                 "cloneFromBranch": "main"
                 }`
@@ -73,7 +73,7 @@ jobs:
               --header 'accept: application/json' \
               --header 'Content-Type: application/json' \    
               --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ $GITHUB_REF_NAME }}/builds'`
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/builds'`
 
           if [ $CODE = 200 ]
           then
