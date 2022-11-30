@@ -144,7 +144,7 @@ jobs:
 
       - name: Run iOS build on AppCenter
         if: ${{ inputs.target == 'ios' || inputs.target == 'both' }}
-        id: build-android
+        id: build-ios
         run: |
           CODE=`curl --write-out '%{http_code}' \
               --silent \
