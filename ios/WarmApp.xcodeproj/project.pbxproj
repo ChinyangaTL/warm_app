@@ -504,7 +504,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.warmup;
 				PRODUCT_NAME = WarmApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "WarmApp-AdHoc";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = WarmAppAppStoreDist;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -535,7 +535,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.warmup;
 				PRODUCT_NAME = WarmApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Warm App";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = WarmAppAppStoreDist;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
