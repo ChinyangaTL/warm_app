@@ -6,11 +6,21 @@ on:
       branch:
         description: 'Branch to build'
         required: true
+      target:
+        type: choice
+        description: 'OS to build for'
+        required: true
+        options:
+          - ios
+          - android
+          - both
 
 env:
   BRANCH: ${{ inputs.branch }}
   AC_USER: Warm_App
-  AC_APP: android_prod
+  AC_APP_ANDROID: android_prod
+  AC_APP_IOS: ios_production
+  CONFIG_BRANCH: main
 
 jobs:
   run-build-on-appcenter:
@@ -18,8 +28,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check if exists config for the branch on AppCenter
-        id: check-config
+      - name: Check build config on AppCenter for Android
+        if: ${{ inputs.target == 'android' || inputs.target == 'both' }}
+        id: check-config-android
         run: |
           CODE=`curl --write-out '%{http_code}' \
             --silent \
@@ -27,20 +38,20 @@ jobs:
             --request GET \
             --header 'accept: application/json' \
             --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-            --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/config'`
+            --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_ANDROID }}/branches/${{ env.BRANCH }}/config'`
 
           if [ $CODE = 200 ] || [ $CODE = 404 ]
           then
             echo $CODE
             echo "::set-output name=code::$CODE"
           else
-            echo "CAN'T CHECK IF EXISTS CONFIG"
+            echo "CAN'T CHECK IF EXISTS CONFIG FOR ANDROID"
             exit 1
           fi
 
-      - name: Set config for the branch on AppCenter
-        if: ${{ steps.check-config.outputs.code == 404 }}
-        id: set-config
+      - name: Set build config on AppCenter for Android
+        if: ${{ steps.check-config-android.outputs.code == 404 && (inputs.target == 'android' || inputs.target == 'both') }}
+        id: set-config-android
         run: |
           CODE=`curl --write-out '%{http_code}' \
             --silent \
@@ -49,9 +60,9 @@ jobs:
             --header 'accept: application/json' \
             --header 'Content-Type: application/json' \
             --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-            --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/config' \
+            --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_ANDROID }}/branches/${{ env.BRANCH }}/config' \
             --data '{ 
-              "cloneFromBranch": "main" 
+              "cloneFromBranch": ${{ env.CONFIG_BRANCH }}
             }'`
 
           if [ $CODE = 200 ]
@@ -59,12 +70,59 @@ jobs:
             echo $CODE
             echo "::set-output name=code::$CODE"
           else
-            echo "CAN'T CHECK IF EXISTS CONFIG"
+            echo "CAN'T SET CONFIG FOR ANDROID"
+            exit 1
+          fi
+
+      - name: Check build config on AppCenter for iOS
+        if: ${{ inputs.target == 'iOS' || inputs.target == 'both' }}
+        id: check-config-ios
+        run: |
+          CODE=`curl --write-out '%{http_code}' \
+            --silent \
+            --output /dev/null \
+            --request GET \
+            --header 'accept: application/json' \
+            --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+            --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_IOS }}/branches/${{ env.BRANCH }}/config'`
+
+          if [ $CODE = 200 ] || [ $CODE = 404 ]
+          then
+            echo $CODE
+            echo "::set-output name=code::$CODE"
+          else
+            echo "CAN'T CHECK IF EXISTS CONFIG FOR IOS"
+            exit 1
+          fi
+
+      - name: Set build config on AppCenter for iOS
+        if: ${{ steps.check-config-ios.outputs.code == 404 && (inputs.target == 'ios' || inputs.target == 'both') }}
+        id: set-config-ios
+        run: |
+          CODE=`curl --write-out '%{http_code}' \
+            --silent \
+            --output /dev/null \
+            --request POST \
+            --header 'accept: application/json' \
+            --header 'Content-Type: application/json' \
+            --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+            --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_IOS }}/branches/${{ env.BRANCH }}/config' \
+            --data '{ 
+              "cloneFromBranch": ${{ env.CONFIG_BRANCH }}
+            }'`
+
+          if [ $CODE = 200 ]
+          then
+            echo $CODE
+            echo "::set-output name=code::$CODE"
+          else
+            echo "CAN'T SET CONFIG FOR IOS"
             exit 1
           fi
 
       - name: Run Android build on AppCenter
-        id: android-build
+        if: ${{ inputs.target == 'android' || inputs.target == 'both' }}
+        id: build-android
         run: |
           CODE=`curl --write-out '%{http_code}' \
               --silent \
@@ -73,13 +131,35 @@ jobs:
               --header 'accept: application/json' \
               --header 'Content-Type: application/json' \
               --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/builds'`
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_ANDROID }}/branches/${{ env.BRANCH }}/builds'`
 
           if [ $CODE = 200 ]
           then
             echo $CODE
             echo "::set-output name=code::$CODE"
           else
-            echo "CAN'T RUN BUILD ON APPCENTER"
+            echo "CAN'T RUN ANDROID BUILD ON APPCENTER"
+            exit 1
+          fi
+
+      - name: Run iOS build on AppCenter
+        if: ${{ inputs.target == 'ios' || inputs.target == 'both' }}
+        id: build-android
+        run: |
+          CODE=`curl --write-out '%{http_code}' \
+              --silent \
+              --output /dev/null \
+              --request POST \
+              --header 'accept: application/json' \
+              --header 'Content-Type: application/json' \
+              --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_IOS }}/branches/${{ env.BRANCH }}/builds'`
+
+          if [ $CODE = 200 ]
+          then
+            echo $CODE
+            echo "::set-output name=code::$CODE"
+          else
+            echo "CAN'T RUN IOS BUILD ON APPCENTER"
             exit 1
           fi
