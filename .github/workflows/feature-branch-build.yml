@@ -3,7 +3,7 @@ name: Feature/Fix Branch Build
 on: workflow_dispatch
 
 env:
-  BRANCH: ${{ $GITHUB_REF_NAME }}
+  BRANCH: ${{ github.ref_name }}
   AC_USER: Warm_App
   AC_APP: android_prod
 
