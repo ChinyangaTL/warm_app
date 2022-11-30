@@ -23,6 +23,6 @@ jobs:
               --request GET \
               --header 'accept: application/json' \
               --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ $GITHUB_REF_NAME }}/config'`
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/$GITHUB_REF_NAME/config'`
 
           echo $CODE
