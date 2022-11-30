@@ -5,7 +5,7 @@ import CodePush from 'react-native-code-push';
 const App = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Hello World, this is a new feature. Updated by CodePush.</Text>
+      <Text>Hello from feature branch.</Text>
     </SafeAreaView>
   );
 };
@@ -19,6 +19,6 @@ const styles = StyleSheet.create({
 });
 
 export default CodePush({
-  updateDialog: true,
+  updateDialog: false,
   installMode: CodePush.InstallMode.IMMEDIATE,
 })(App);
