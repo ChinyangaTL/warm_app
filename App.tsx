@@ -5,7 +5,7 @@ import CodePush from 'react-native-code-push';
 const App = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Hello World</Text>
+      <Text>Hello World, this is a new feature.</Text>
     </SafeAreaView>
   );
 };
