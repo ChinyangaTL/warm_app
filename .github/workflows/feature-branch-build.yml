@@ -20,7 +20,7 @@ env:
   AC_USER: Warm_App
   AC_APP_ANDROID: android_prod
   AC_APP_IOS: ios_production
-  CONFIG_BRANCH: main
+  CONFIG_BRANCH: feature-branch-config
 
 jobs:
   run-build-on-appcenter:
