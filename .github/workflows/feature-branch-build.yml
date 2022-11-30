@@ -62,7 +62,7 @@ jobs:
             --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
             --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_ANDROID }}/branches/${{ env.BRANCH }}/config' \
             --data '{ 
-              "cloneFromBranch": ${{ env.CONFIG_BRANCH }}
+              "cloneFromBranch": "${{ env.CONFIG_BRANCH }}"
             }'`
 
           if [ $CODE = 200 ]
@@ -108,8 +108,8 @@ jobs:
             --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
             --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_IOS }}/branches/${{ env.BRANCH }}/config' \
             --data '{ 
-              "cloneFromBranch": ${{ env.CONFIG_BRANCH }}
-            }'`
+              "cloneFromBranch": "${{ env.CONFIG_BRANCH }}"
+            }'`       
 
           if [ $CODE = 200 ]
           then
