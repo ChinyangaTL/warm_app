@@ -46,12 +46,12 @@ jobs:
               --silent \
               --output /dev/null \
               --request POST \
-              --header 'accept: application/json' \
-              --header 'Content-Type: application/json' \    
-              --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+              -H 'accept: application/json' \
+              -H 'Content-Type: application/json' \    
+              -H 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
               --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP }}/branches/${{ env.BRANCH }}/config' \
-              --data { \
-                "cloneFromBranch": "main" \
+              --data {
+                "cloneFromBranch": "main"
                 }`
 
           if [ $CODE = 200 ]
