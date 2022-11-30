@@ -1,9 +1,14 @@
 name: Feature/Fix Branch Build
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
 
 env:
-  BRANCH: ${{ github.ref_name }}
+  BRANCH: ${{ inputs.branch }}
   AC_USER: Warm_App
   AC_APP: android_prod
 
@@ -13,9 +18,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Branch name
-        run: echo running on branch $GITHUB_REF_NAME
-
       - name: Check if exists config for the branch on AppCenter
         id: check-config
         run: |
