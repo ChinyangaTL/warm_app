@@ -3,9 +3,6 @@ name: Release Build
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Branch to build'
-        required: true
       target:
         type: choice
         description: 'Version bump'
@@ -17,7 +14,7 @@ on:
           - hotfix
 
 env:
-  BRANCH: ${{ inputs.branch }}
+  BRANCH: dev
   AC_USER: Warm_App
   AC_APP_ANDROID: android_prod
   AC_APP_IOS: ios_production
@@ -29,6 +26,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH }}
+
       - name: Bump version
         id: bump-version
         run: |
