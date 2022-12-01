@@ -34,4 +34,4 @@ jobs:
       - name: Bump version
         id: bump-version
         run: |
-          echo "yarn np --any-branch"
+          yarn np --any-branch patch
