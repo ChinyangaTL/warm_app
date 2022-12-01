@@ -35,6 +35,6 @@ jobs:
         id: bump-version
         run: |
           yarn global add np
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
+          git config --global user.email "nicavallin@gmail.com"
+          git config --global user.name "GitHub Actions Bot"
           yarn np --any-branch patch --branch ${{ env.BRANCH }}
