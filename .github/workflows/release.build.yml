@@ -34,4 +34,5 @@ jobs:
       - name: Bump version
         id: bump-version
         run: |
-          echo "yarn np --any-branch"
+          yarn global add np
+          yarn np --any-branch patch --branch ${{ env.BRANCH }}
