@@ -12,9 +12,6 @@ on:
           - minor
           - major
           - hotfix
-          - prepatch
-          - preminor
-          - premajor
           - prerelease
 
 env:
@@ -24,7 +21,7 @@ env:
   AC_APP_IOS: ios_production
   CONFIG_BRANCH: feature-branch-config
   VERSION: ${{ inputs.target == 'hotfix' && 'prerelease' || inputs.target }}
-  TAG: ${{ inputs.target == 'hotfix' && 'hotfix' || '' }}
+  TAG: ${{ inputs.target == 'hotfix' && 'hotfix' || 'latest' }}
 
 jobs:
   prepare-build:
@@ -43,4 +40,4 @@ jobs:
           yarn global add np
           git config --global user.email "no-reply@google.com"
           git config --global user.name "GitHub Actions Bot"
-          yarn np --any-branch ${{ env.VERSION }} --branch ${{ env.BRANCH }} ${{ env.TAG != '' && echo '--tag="${{ env.tag }}"' }}
+          yarn np --any-branch ${{ env.VERSION }} --branch ${{ env.BRANCH }} --tag="${{ env.TAG }}"
