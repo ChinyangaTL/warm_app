@@ -43,4 +43,4 @@ jobs:
           yarn global add np
           git config --global user.email "no-reply@google.com"
           git config --global user.name "GitHub Actions Bot"
-          yarn np --any-branch ${{ env.VERSION }} --branch ${{ env.BRANCH }} --tag ${{ env.TAG }}
+          yarn np --any-branch ${{ env.VERSION }} --branch ${{ env.BRANCH }} ${{ env.TAG != '' && echo '--tag="${{ env.tag }}"' }}
