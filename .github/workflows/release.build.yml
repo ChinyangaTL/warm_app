@@ -1,0 +1,35 @@
+name: Feature/Fix Branch Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+      target:
+        type: choice
+        description: 'Version bump'
+        required: true
+        options:
+          - major
+          - minor
+          - patch
+          - hotfix
+
+env:
+  BRANCH: ${{ inputs.branch }}
+  AC_USER: Warm_App
+  AC_APP_ANDROID: android_prod
+  AC_APP_IOS: ios_production
+  CONFIG_BRANCH: feature-branch-config
+
+jobs:
+  prepare-build:
+    name: Feature/Fix Branch Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Bump version
+        id: bump-version
+        run: |
+          echo "yarn np --any-branch"
