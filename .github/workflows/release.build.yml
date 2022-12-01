@@ -8,10 +8,14 @@ on:
         description: 'Version bump'
         required: true
         options:
-          - major
-          - minor
           - patch
+          - minor
+          - major
           - hotfix
+          - prepatch
+          - preminor
+          - premajor
+          - prerelease
 
 env:
   BRANCH: dev
@@ -19,6 +23,8 @@ env:
   AC_APP_ANDROID: android_prod
   AC_APP_IOS: ios_production
   CONFIG_BRANCH: feature-branch-config
+  VERSION: ${{ inputs.target == 'hotfix' && 'prerelease' || inputs.target }}
+  TAG: ${{ inputs.target == 'hotfix' && 'hotfix' || '' }}
 
 jobs:
   prepare-build:
@@ -37,4 +43,4 @@ jobs:
           yarn global add np
           git config --global user.email "nicavallin@gmail.com"
           git config --global user.name "GitHub Actions Bot"
-          yarn np --any-branch patch --branch ${{ env.BRANCH }}
+          yarn np --any-branch ${{ env.VERSION }} --branch ${{ env.BRANCH }} --tag ${{ env.TAG }}
