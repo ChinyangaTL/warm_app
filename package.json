@@ -1,6 +1,6 @@
 {
   "name": "WarmApp",
-  "version": "0.0.2",
+  "version": "0.0.3-hotfix.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
