@@ -34,4 +34,5 @@ jobs:
       - name: Bump version
         id: bump-version
         run: |
+          yarn global add np
           yarn np --any-branch patch
