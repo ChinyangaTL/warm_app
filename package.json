@@ -8,7 +8,7 @@
     "start": "react-native start",
     "test": "jest ./__tests__",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "np": "np --no-publish",
+    "np": "np",
     "postversion": "react-native-version"
   },
   "dependencies": {
