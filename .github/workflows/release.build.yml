@@ -60,13 +60,18 @@ jobs:
           TITLE=`echo ${COMMIT:0:1} | tr  '[a-z]' '[A-Z]'`${COMMIT:1}
           PR_TITLE="$TITLE v$NEW_VERSION"
 
-          PR_URL=`gh pr create --base main --head ${{ env.BRANCH }} --title="$PR_TITLE" --body="$PR_TITLE" --label=${{ env.COMMIT }}`
+          if [ {{ env.COMMIT }} = "hotfix" ] || [ {{ env.COMMIT }} = "prerelease" ]
+          then
+            PR_URL=""
+          else
+            PR_URL=`gh pr create --base main --head ${{ env.BRANCH }} --title="$PR_TITLE" --body="$PR_TITLE" --label=${{ env.COMMIT }}`
+          fi
 
           if [ {{ env.COMMIT }} = "hotfix" ] || [ {{ env.COMMIT }} = "prerelease" ]
           then
-            RELEASE_URL=`gh release create v$NEW_VERSION --generate-notes --draft --prerelease`
+            RELEASE_URL=`gh release create v$NEW_VERSION --generate-notes --prerelease`
           else
-            RELEASE_URL=`gh release create v$NEW_VERSION --generate-notes --draft`
+            RELEASE_URL=`gh release create v$NEW_VERSION --generate-notes`
           fi
 
           echo "::set-output name=new_version::$NEW_VERSION"
