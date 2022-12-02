@@ -19,6 +19,7 @@ on:
           - premajor
 
 env:
+  GH_TOKEN: ${{ github.token }}
   BRANCH: dev
   AC_USER: Warm_App
   AC_APP_ANDROID: android_prod
