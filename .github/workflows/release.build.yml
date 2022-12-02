@@ -47,4 +47,4 @@ jobs:
           git config --global user.name "${{ github.triggering_actor }}"
           yarn np --any-branch --no-tests ${{ env.VERSION }} --branch ${{ env.BRANCH }} --message="${{ env.COMMIT }} v%s"
           NEW_VERSION=`jq .version package.json`
-          gh pr create --base main --head ${{ env.BRANCH }} --title "${{ env.COMMIT }} $NEW_VERSION" --label ${{ env.COMMIT }}
+          gh pr create --base main --head ${{ env.BRANCH }} --title="${{ env.COMMIT }} $NEW_VERSION" --body="${{ env.COMMIT }} $NEW_VERSION" --label=${{ env.COMMIT }}
