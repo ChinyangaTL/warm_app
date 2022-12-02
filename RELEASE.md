@@ -47,7 +47,7 @@ If the current version is: 1.0.2-0, then:
 ### 3. Check the release process
 
 - If the GitHub Actions workflow fails, you'll receive a notification through Slack.
-- If the GitHub Actions workflow succeed, the AppCenter workflow will start automatically.
+- If the GitHub Actions workflow succeed, you'll receive a notification through Slack with the PR and Release links on GitHub. Then, the AppCenter workflow will start automatically.
 - If the AppCenter workflow fails, you'll receive a notification through Slack.
 - If the AppCenter workflow succeed, you'll receive a notification through Slack and the new version will sent to the stores.
 
