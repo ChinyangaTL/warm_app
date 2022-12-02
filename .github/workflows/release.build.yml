@@ -51,6 +51,13 @@ jobs:
           git config --global user.name "${{ github.triggering_actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
+          if [ {{ env.COMMIT }} = "hotfix" ] || [ {{ env.COMMIT }} = "prerelease" ]
+          then
+            PR_URL=""
+          else
+            PR_URL=`gh pr create --base main --head ${{ env.BRANCH }} --title="$PR_TITLE" --body="$PR_TITLE" --label=${{ env.COMMIT }}`
+          fi
+
           yarn global add np
 
           yarn np --any-branch --no-tests ${{ env.VERSION }} --branch ${{ env.BRANCH }} --message="${{ env.COMMIT }} v%s"
@@ -60,12 +67,6 @@ jobs:
           TITLE=`echo ${COMMIT:0:1} | tr  '[a-z]' '[A-Z]'`${COMMIT:1}
           PR_TITLE="$TITLE v$NEW_VERSION"
 
-          if [ {{ env.COMMIT }} = "hotfix" ] || [ {{ env.COMMIT }} = "prerelease" ]
-          then
-            PR_URL=""
-          else
-            PR_URL=`gh pr create --base main --head ${{ env.BRANCH }} --title="$PR_TITLE" --body="$PR_TITLE" --label=${{ env.COMMIT }}`
-          fi
 
           if [ {{ env.COMMIT }} = "hotfix" ] || [ {{ env.COMMIT }} = "prerelease" ]
           then
