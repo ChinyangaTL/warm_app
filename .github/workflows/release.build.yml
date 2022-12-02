@@ -46,5 +46,6 @@ jobs:
           git config --global user.email "hello@holded.com"
           git config --global user.name "${{ github.triggering_actor }}"
           yarn np --any-branch --no-tests ${{ env.VERSION }} --branch ${{ env.BRANCH }} --message="${{ env.COMMIT }} v%s"
-          NEW_VERSION=`jq .version package.json` | sed "s/\"//g"
-          gh pr create --base main --head ${{ env.BRANCH }} --title="${{ env.COMMIT }} $NEW_VERSION" --body="${{ env.COMMIT }} $NEW_VERSION"
+          NEW_VERSION=`jq .version package.json | sed "s/\"//g"`
+          gh pr create --base main --head ${{ env.BRANCH }} --title="${{ env.COMMIT }} $NEW_VERSION" --body="${{ env.COMMIT }} $NEW_VERSION" --label="v$NEW_VERSION"
+          gh release create v$NEW_VERSION --generate-notes
