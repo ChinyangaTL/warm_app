@@ -57,7 +57,7 @@ jobs:
 
           NEW_VERSION=`jq .version package.json | sed "s/\"//g"`
 
-          TITLE=`echo ${COMMIT:0:1} | tr  '[a-z]' '[A-Z]'`${COMMIT:1}`
+          TITLE=`echo ${COMMIT:0:1} | tr  '[a-z]' '[A-Z]'`${COMMIT:1}
           PR_TITLE=`$TITLE v$NEW_VERSION`
 
           PR_URL=`gh pr create --base main --head ${{ env.BRANCH }} --title="$PR_TITLE" --fill --asignee=@me --label=${{ env.COMMIT }}`
