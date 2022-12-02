@@ -5,7 +5,7 @@ on:
     inputs:
       target:
         type: choice
-        description: 'Version bump (if you are not sure, check http://google.com/RELEASE.md)'
+        description: 'Version bump (if you are not sure, check RELEASE.md)'
         default: prerelease
         required: true
         options:
@@ -17,6 +17,11 @@ on:
           - prepatch
           - preminor
           - premajor
+      skip-bump:
+        type: boolean
+        description: 'Skip version bump (only if you know what you are doing)'
+        default: false
+        required: false
 
 env:
   GH_TOKEN: ${{ github.token }}
@@ -40,12 +45,13 @@ jobs:
           ref: ${{ env.BRANCH }}
 
       - name: Bump version
+        if: ${{ !inputs.skip-bump }}
         id: bump-version
         run: |
           yarn global add np
-          git config --global user.email "hello@holded.com"
           git config --global user.name "${{ github.triggering_actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           yarn np --any-branch --no-tests ${{ env.VERSION }} --branch ${{ env.BRANCH }} --message="${{ env.COMMIT }} v%s"
           NEW_VERSION=`jq .version package.json | sed "s/\"//g"`
-          gh pr create --base main --head ${{ env.BRANCH }} --title="${{ env.COMMIT }} $NEW_VERSION" --body="${{ env.COMMIT }} $NEW_VERSION"
-          gh release create v$NEW_VERSION --generate-notes
+          gh pr create --base main --head ${{ env.BRANCH }} --title="echo "$(tr '[:lower:]' '[:upper:]' <<< ${${{ env.COMMIT }}:0:1})${${{ env.COMMIT }}:1}" v$NEW_VERSION" --fill $NEW_VERSION"
+          gh release create v$NEW_VERSION --generate-notes --draft
