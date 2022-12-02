@@ -43,5 +43,5 @@ jobs:
         run: |
           yarn global add np
           git config --global user.email "hello@holded.com"
-          git config --global user.name {{ github.triggering_actor }}
+          git config --global user.name "${{ github.triggering_actor }}"
           yarn np --any-branch --no-tests ${{ env.VERSION }} --branch ${{ env.BRANCH }} --message="${{ env.COMMIT }} v%s"
