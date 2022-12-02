@@ -60,7 +60,7 @@ jobs:
           TITLE=`echo ${COMMIT:0:1} | tr  '[a-z]' '[A-Z]'`${COMMIT:1}
           PR_TITLE="$TITLE v$NEW_VERSION"
 
-          PR_URL=`gh pr create --base main --head ${{ env.BRANCH }} --title="$PR_TITLE" --body="$PR_TITLE" --asignee=@me --label=${{ env.COMMIT }}`
+          PR_URL=`gh pr create --base main --head ${{ env.BRANCH }} --title="$PR_TITLE" --body="$PR_TITLE" --assignee=@me --label=${{ env.COMMIT }}`
 
           if [ {{ env.COMMIT }} = "hotfix" ] || [ {{ env.COMMIT }} = "prerelease" ]
           then
