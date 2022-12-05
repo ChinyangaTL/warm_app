@@ -38,10 +38,13 @@ If the current version is: 1.0.2-0, then:
 - `premajor` will bump the version to 2.0.0-0
 
 > **Note**
+> 
 > The only difference between `hotfix` and `prerelease` is that hotfix will have the _hotfix_ suffix, and run the `codepush` command that release the new code for OTA updates. Then you must run the workflow again with the `patch` option to release the new version to the stores.
 
 > **Warning**
+> 
 > You'll be able to SKIP the bump version step. Use in case that GitHub Actions or AppCenter fails to release the new version, and if you are sure that the version was not released.
+> 
 > If a `hotfix` fails, you must run the codepush command manually.
 
 ### 3. Check the release process
