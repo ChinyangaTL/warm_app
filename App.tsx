@@ -8,8 +8,8 @@ const App = () => {
       <Text testID="welcome">
         Hello World, this is a new feature. Updated by CodePush.
       </Text>
-      <Text>WELCOME</Text>
-      <Text>Extra</Text>
+      <Text>Doing a new feature from a feature branch.</Text>
+      <Text>Doing another task in the new feature</Text>
     </SafeAreaView>
   );
 };
