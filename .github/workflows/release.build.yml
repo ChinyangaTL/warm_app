@@ -44,6 +44,26 @@ jobs:
         with:
           ref: ${{ env.BRANCH }}
 
+      - name: Check if exists PR
+        id: check-pr
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ env.GH_TOKEN }}
+          script: |
+            const { data: prs } = await github.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              head: 'main',
+              base: 'dev'
+            })
+            console.log('PRs:', prs)
+            if (prs.length > 0) {
+              console.log('There is an open PR from main to dev, please merge it first, then run this action again')
+              exit 1
+            }
+            return null
+
       - name: Bump version
         if: ${{ !inputs.skip-bump }}
         id: bump-version
