@@ -53,9 +53,8 @@ jobs:
               --repo ${{ github.repository }} \
               --json baseRefName,headRefName \
               --jq '
-                  map(select(.baseRefName == "${{ env.BASE_BRANCH }}" and .headRefName == "${{ env.BRANCH }}")) |
-                  | length
-              ')
+                map(select(.baseRefName == "${{ env.BASE_BRANCH }}" and .headRefName == "${{ env.BRANCH }}")) | length
+                ')
           if ((prs > 0)); then
               echo "THERE IS AN ACTIVE PR BETWEEN ${{ env.BASE_BRANCH }} AND ${{ env.BRANCH }}. PLEASE MERGE IT BEFORE PROCEEDING. THEN, RESTART THE WORKFLOW."
               exit 1
