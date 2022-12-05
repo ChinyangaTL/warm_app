@@ -20,7 +20,6 @@ const Tab1 = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text>Hey there!</Text>
-      <Text>Renova tu plan!</Text>
       <TouchableOpacity onPress={onCheckUpdates}>
         <Text>Check updates</Text>
       </TouchableOpacity>
@@ -33,7 +32,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
-    backgroundColor: 'yellow',
+    backgroundColor: 'orange',
   },
 });
 

@@ -9,7 +9,9 @@
     "test": "jest ./__tests__",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "np": "np --no-publish",
-    "postversion": "react-native-version"
+    "postversion": "react-native-version",
+    "clean-cache": "rm -rf $TMPDIR/react-*; rm -rf $TMPDIR/haste-*; rm -rf $TMPDIR/metro-*; watchman watch-del-all",
+    "clean-all": "yarn clean-cache; rm yarn.lock; rm -rf packages/*/ios/build; rm -rf packages/*/ios/Pods; rm packages/*/ios/Podfile.lock; rm -rf ./ios/Pods; rm -rf ./ios/build; rm -rf ./android/app/build; rm -rf ./android/build; rm -rf ./android/.gradle; rm -rf node_modules; for d in packages/*/node_modules; do echo $d; rm -rf $d; done"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.4.3",
