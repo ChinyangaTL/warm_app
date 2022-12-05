@@ -1,0 +1,5 @@
+android/app/build.gradle merge=theirs
+ios/WarmApp.xcodeproj/project.pbxproj merge=theirs
+ios/WarmApp/Info.plist merge=theirs
+ios/WarmAppTests/Info.plist merge=theirs
+package.json merge=theirs
