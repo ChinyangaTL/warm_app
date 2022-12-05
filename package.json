@@ -1,6 +1,6 @@
 {
   "name": "WarmApp",
-  "version": "0.5.21-2",
+  "version": "0.5.21",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
