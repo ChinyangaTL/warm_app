@@ -26,6 +26,7 @@ on:
 env:
   GH_TOKEN: ${{ github.token }}
   BRANCH: dev
+  BASE_BRANCH: main
   AC_USER: Warm_App
   AC_APP_ANDROID: android_prod
   AC_APP_IOS: ios_production
@@ -44,32 +45,24 @@ jobs:
         with:
           ref: ${{ env.BRANCH }}
 
-      - name: Check if exists PR
-        id: check-pr
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ env.GH_TOKEN }}
-          script: |
-            const { data: prs } = await github.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              head: 'main',
-              base: 'dev'
-            })
-            console.log('PRs:', prs)
-            if (prs.length > 0) {
-              console.log('There is an open PR from main to dev, please merge it first, then run this action again')
-              exit 1
-            }
-            return null
-
       - name: Bump version
         if: ${{ !inputs.skip-bump }}
         id: bump-version
         run: |
+          prs=$(gh pr list \
+              --repo ${{ github.repository }} \
+              --json baseRefName,headRefName \
+              --jq '
+                  map(select(.baseRefName == "${{ env.BASE_BRANCH }}" and .headRefName == "${{ env.BRANCH }}")) |
+                  | length
+              ')
+          if ((prs > 0)); then
+              echo "THERE IS AN ACTIVE PR BETWEEN ${{ env.BASE_BRANCH }} AND ${{ env.BRANCH }}. PLEASE MERGE IT BEFORE PROCEEDING. THEN, RESTART THE WORKFLOW."
+              exit 1
+          fi        
+
           git config --global user.name "${{ github.triggering_actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"          
 
           yarn global add np
 
