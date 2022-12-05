@@ -1,13 +1,29 @@
 import React from 'react';
-import {SafeAreaView, Text, StyleSheet} from 'react-native';
+import {SafeAreaView, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import codePush from 'react-native-code-push';
 
 const Tab1 = () => {
+  const onCheckUpdates = () => {
+    codePush.sync({
+      updateDialog: {
+        title: 'Update available',
+        optionalIgnoreButtonLabel: 'Later',
+        optionalInstallButtonLabel: 'Install',
+        optionalUpdateMessage: 'New version available. Install now?',
+        mandatoryContinueButtonLabel: 'Continue',
+        mandatoryUpdateMessage:
+          'An update is available. Please restart the app.',
+      },
+      installMode: codePush.InstallMode.IMMEDIATE,
+    });
+  };
   return (
     <SafeAreaView style={styles.container}>
-      <Text testID="welcome">
-        Hello World, this is a new feature. Updated by CodePush.
-      </Text>
-      <Text>WELCOME</Text>
+      <Text>Hey there!</Text>
+      <Text>Renova tu plan!</Text>
+      <TouchableOpacity onPress={onCheckUpdates}>
+        <Text>Check updates</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -17,6 +33,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
+    backgroundColor: 'yellow',
   },
 });
 

@@ -12,6 +12,14 @@ const App = () => {
 };
 
 export default CodePush({
-  updateDialog: false,
   installMode: CodePush.InstallMode.IMMEDIATE,
+  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+  updateDialog: {
+    title: 'HOLA',
+    optionalIgnoreButtonLabel: 'Later',
+    optionalInstallButtonLabel: 'Install',
+    optionalUpdateMessage: 'New version available. Install now?',
+    mandatoryContinueButtonLabel: 'Continue',
+    mandatoryUpdateMessage: 'An update is available. Please restart the app.',
+  },
 })(App);
