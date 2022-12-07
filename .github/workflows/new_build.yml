@@ -6,6 +6,9 @@ jobs:
   prepare-build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
       - name: View context attributes
         uses: actions/github-script@v6
         with:
