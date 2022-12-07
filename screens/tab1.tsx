@@ -7,6 +7,10 @@ const Tab1 = () => {
       <Text testID="welcome">
         Hello World, this is a new feature. Updated by CodePush.
       </Text>
+
+
+      
+
       <Text>WELCOME</Text>
     </SafeAreaView>
   );
