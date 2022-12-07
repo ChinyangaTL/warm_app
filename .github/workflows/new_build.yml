@@ -15,7 +15,7 @@ jobs:
           script: console.log("${{ secrets.ANDROID_ALIAS }}")
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Run Lint
         run: yarn lint:fix
