@@ -2,7 +2,7 @@ import React, {Component, FC} from 'react';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {NavigationContainer} from '@react-navigation/native';
 import AppNavigator from './AppNavigator';
-import {Text, View} from 'react-native';
+import {ActivityIndicator, Text, View} from 'react-native';
 
 class PreApp extends Component {
   state = {
@@ -20,6 +20,7 @@ class PreApp extends Component {
 
   render() {
     const {status, progress} = this.state;
+    console.log('status', status);
     return <App status={status} progress={progress} />;
   }
 }
@@ -31,9 +32,7 @@ type AppProps = {
 
 const App: FC<AppProps> = ({status, progress}) => {
   const isLoading =
-    status === codePush.SyncStatus.CHECKING_FOR_UPDATE ||
     status === codePush.SyncStatus.DOWNLOADING_PACKAGE ||
-    status === codePush.SyncStatus.SYNC_IN_PROGRESS ||
     status === codePush.SyncStatus.INSTALLING_UPDATE;
   return (
     <NavigationContainer>
@@ -60,8 +59,17 @@ const App: FC<AppProps> = ({status, progress}) => {
               borderRadius: 8,
               elevation: 3,
             }}>
-            <Text>Updating..</Text>
-            <Text>{progress.receivedBytes}</Text>
+            <Text>
+              Updating App <ActivityIndicator />
+            </Text>
+            <Text>
+              {Math.floor(
+                (progress.receivedBytes /
+                  (progress.totalBytes > 0 ? progress.totalBytes : 1)) *
+                  100,
+              )}
+              %
+            </Text>
           </View>
         </View>
       ) : null}
