@@ -223,10 +223,13 @@ android {
             keyPassword 'android'
         }
         appCenterReleaseSigningConfig {
-            storeFile rootProject.file("app/branch-dist.keystore")
-            storePassword System.getProperty("APPCENTER_KEYSTORE_PASSWORD")
-            keyAlias System.getProperty("APPCENTER_KEY_ALIAS")
-            keyPassword System.getProperty("APPCENTER_KEY_PASSWORD")
+            storeFile file('branchDist.keystore')
+            // storePassword System.getProperty("APPCENTER_KEYSTORE_PASSWORD")
+            // keyAlias System.getProperty("APPCENTER_KEY_ALIAS")
+            // keyPassword System.getProperty("APPCENTER_KEY_PASSWORD")
+            storePassword 'keyPassword'
+            keyAlias 'android-branch-distribution'
+            keyPassword 'keyPassword'
         }
     }
     buildTypes {
