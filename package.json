@@ -3,13 +3,18 @@
   "version": "0.6.12-0",
   "private": true,
   "scripts": {
+    // LOCAL
+    "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start",
+    // TEST
     "test": "jest ./__tests__",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    // VERSION
     "np": "np --no-publish",
-    "postversion": "react-native-version"
+    "postversion": "react-native-version",
+    // ESLINT
+    "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.4.3",
