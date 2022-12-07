@@ -8,14 +8,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-        
+
       - name: View context attributes
         uses: actions/github-script@v6
         with:
           script: console.log("${{ secrets.ANDROID_ALIAS }}")
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
 
       - name: Run Lint
         run: yarn lint:fix
