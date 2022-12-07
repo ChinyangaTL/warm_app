@@ -8,9 +8,6 @@ const Tab1 = () => {
         Hello World, this is a new feature. Updated by CodePush.
       </Text>
 
-
-      
-
       <Text>WELCOME</Text>
     </SafeAreaView>
   );
