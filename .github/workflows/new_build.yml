@@ -17,12 +17,8 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Run Lint
-        run: yarn lint:fix
-
-      - name: Commit changes
-        run: |
-          git config --local user.email "a@a.a"
-          git config --local user.name "GitHub Actions"
-          git commit -m "Linting" -a
-          git push
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          eslint: true
+          prettier: true
