@@ -1,0 +1,23 @@
+name: Auto Feature/Fix Branch Build
+
+on:
+  push:
+    branches:
+      - 'MT-**'
+
+env:
+  AC_USER: Warm_App
+  AC_APP_ANDROID: android_prod
+  AC_APP_IOS: ios_production
+  CONFIG_BRANCH: feature-branch-config
+
+jobs:
+  run-build-on-appcenter:
+    name: Feature/Fix Branch Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Echo Test
+        id: echo
+        run: |
+          echo "::set-output name=code::200"
