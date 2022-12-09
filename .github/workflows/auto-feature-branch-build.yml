@@ -21,3 +21,6 @@ jobs:
         id: echo
         run: |
           echo "::set-output name=code::200"
+
+      - name: Hello World
+        run: echo "Hello World"
