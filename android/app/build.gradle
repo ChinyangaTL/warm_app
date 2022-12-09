@@ -139,11 +139,13 @@ android {
         applicationId "com.warmapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 84
-        versionName "0.6.12-0"
+        versionCode 104
+        versionName "0.6.17"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         testBuildType System.getProperty("testBuildType", "debug")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        resValue 'string', "CODE_PUSH_APK_BUILD_TIME", String.format("\"%d\"", System.currentTimeMillis())
 
         if (isNewArchitectureEnabled()) {
             // We configure the CMake build only if you decide to opt-in for the New Architecture.
@@ -220,6 +222,15 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        appCenterReleaseSigningConfig {
+            storeFile file('branchDist.keystore')
+            // storePassword System.getProperty("APPCENTER_KEYSTORE_PASSWORD")
+            // keyAlias System.getProperty("APPCENTER_KEY_ALIAS")
+            // keyPassword System.getProperty("APPCENTER_KEY_PASSWORD")
+            storePassword 'keyPassword'
+            keyAlias 'android-branch-distribution'
+            keyPassword 'keyPassword'
+        }
     }
     buildTypes {
         debug {
@@ -232,6 +243,7 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
             // proguardFile "${project(':detox').projectDir}/proguard-rules-app.pro"
+            signingConfig signingConfigs.appCenterReleaseSigningConfig
         }
     }
 
