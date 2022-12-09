@@ -22,3 +22,4 @@ jobs:
           app: ${{ env.AC_APP_ANDROID }}
           workbranch: ${{ github.ref }}
           configbranch: ${{ env.CONFIG_BRANCH }}
+          token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
