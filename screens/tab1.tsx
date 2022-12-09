@@ -25,6 +25,7 @@ const Tab1 = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text>Hey there!</Text>
+      <Text>New feature</Text>
       <TouchableOpacity onPress={onCheckUpdates}>
         <Text>Check updates</Text>
       </TouchableOpacity>
