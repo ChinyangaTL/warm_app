@@ -15,12 +15,29 @@ jobs:
   run-build-on-appcenter:
     name: Feature/Fix Branch Build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Echo Test
-        id: echo
-        run: |
-          echo "::set-output name=code::200"
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const android = await fetch(`https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_ANDROID }}/branches/${{ env.BRANCH }}/config'`, {
+              method: 'GET',
+              headers: {
+                'accept': 'application/json',
+                'X-API-Token': '${{ secrets.APP_CENTER_ACCESS_TOKEN }}'
+              }
+            })
 
-      - name: Hello World
-        run: echo "Hello World"
+            const ios = await fetch(`https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_IOS }}/branches/${{ env.BRANCH }}/config'`, {
+              method: 'GET',
+              headers: {
+                'accept': 'application/json',
+                'X-API-Token': '${{ secrets.APP_CENTER_ACCESS_TOKEN }}'
+              }
+            })
+
+            const androidCode = android.status
+            const iosCode = ios.status
+
+            console.log(androidCode)
+            console.log()
+            console.log(iosCode)
