@@ -24,6 +24,6 @@ jobs:
         with:
           appcenter_user: ${{ env.AC_USER }}
           appcenter_app: ${{ env.AC_APP_IOS }}
-          branch_name: ${{ github.ref }}
+          branch_name: ${{ github.ref_name }}
           settings_branch_name: ${{ env.CONFIG_BRANCH }}
           appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}x
