@@ -16,7 +16,11 @@ jobs:
     name: Feature/Fix Branch Build
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/appcenter
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        uses: ./.github/actions/appcenter
         with:
           appcenter_user: ${{ env.AC_USER }}
           appcenter_app: ${{ env.AC_APP_IOS }}
