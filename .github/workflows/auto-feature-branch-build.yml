@@ -20,6 +20,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build
+        id: appcenter-build
         uses: ./.github/actions/appcenter
         with:
           appcenter_user: ${{ env.AC_USER }}
@@ -27,3 +28,6 @@ jobs:
           branch_name: ${{ github.ref_name }}
           settings_branch_name: ${{ env.CONFIG_BRANCH }}
           appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
+
+      - name: Echo appcenter output
+        run: echo ${{ steps.appcenter-build.outputs.build_id }}
