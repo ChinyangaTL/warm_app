@@ -6,7 +6,7 @@ on:
       - 'MT-**'
 
 env:
-  AC_USER: Warm_App
+  AC_USER: Warm_App2
   AC_APP_ANDROID: android_prod
   AC_APP_IOS: ios_production
   CONFIG_BRANCH: feature-branch-config
@@ -16,10 +16,10 @@ jobs:
     name: Feature/Fix Branch Build
     runs-on: ubuntu-latest
     steps:
-      - uses: nicolascavallin/appcenter-config-build
+      - uses: ./.github/actions/appcenter
         with:
-          user: ${{ env.AC_USER }}
-          app: ${{ env.AC_APP_ANDROID }}
-          workbranch: ${{ github.ref }}
-          configbranch: ${{ env.CONFIG_BRANCH }}
-          token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
+          appcenter_user: ${{ env.AC_USER }}
+          appcenter_app: ${{ env.AC_APP_IOS }}
+          branch_name: ${{ github.ref }}
+          settings_branch_name: ${{ env.CONFIG_BRANCH }}
+          appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}x
