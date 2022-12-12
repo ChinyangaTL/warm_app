@@ -31,3 +31,6 @@ jobs:
 
       - name: Echo appcenter output
         run: echo ${{ steps.appcenter-build.outputs.build_id }}
+
+      - name: Echo appcenter output
+        run: echo ${{ steps.appcenter-build.outputs.build_id }}
