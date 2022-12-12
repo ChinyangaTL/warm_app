@@ -29,8 +29,10 @@ jobs:
           settings_branch_name: ${{ env.CONFIG_BRANCH }}
           appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
 
-      - name: Echo appcenter output
-        run: echo ${{ steps.appcenter-build.outputs.build_id }}
+      - name: Run Yarn Lint
+        id: yarn-lint
+        run: yarn lint
 
-      - name: Echo appcenter output
-        run: echo ${{ steps.appcenter-build.outputs.build_id }}
+      - name: Echo Yarn Lint
+        if: always()
+        run: echo ${{ steps.yarn-lint }}
