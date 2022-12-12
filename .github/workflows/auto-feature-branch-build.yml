@@ -35,4 +35,4 @@ jobs:
 
       - name: Echo Yarn Lint
         if: always()
-        run: echo ${{ steps.yarn-lint }}
+        run: echo ${{ steps.yarn-lint.outputs }}
