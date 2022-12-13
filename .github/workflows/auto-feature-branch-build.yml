@@ -106,30 +106,7 @@ jobs:
               }'`
 
           curl -X POST -H 'Content-type: application/json' --data '{
-            "blocks": [
-                {
-                    "type": "header",
-                    "text": {
-                        "type": "plain_text",
-                        "text": ":x:   Build Action Failed",
-                        "emoji": true
-                    }
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "Hey <@${{ steps.slack.outputs.slack_id }}>, the build action have failed."
-                    }
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions."
-                    }
-                }
-            ]
+            "text": ":x:   GitHub Action Failed\n\nHey <@${{ steps.slack.outputs.slack_id }}>, the build action have failed.\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions.",
           }' ${{ secrets.SLACK_URL }}
 
           echo "❌ GitHub Action failed"
