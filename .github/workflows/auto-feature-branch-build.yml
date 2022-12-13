@@ -34,94 +34,124 @@ jobs:
             echo "slack_id=$CONTRIBUTOR" >> $GITHUB_OUTPUT
           fi
 
-      - name: Echo Slack id
-        run: echo ${{ steps.slack_id.outputs.slack_id }}
+      - name: Build iOS
+        id: appcenter-build-ios
+        uses: ./.github/actions/appcenter
+        with:
+          appcenter_user: ${{ env.AC_USER }}
+          appcenter_app: ${{ env.AC_APP_IOS }}
+          branch_name: ${{ env.BRANCH_NAME }}
+          settings_branch_name: ${{ env.CONFIG_BRANCH }}
+          appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
 
-      # - name: Build iOS
-      #   id: appcenter-build-ios
-      #   uses: ./.github/actions/appcenter
-      #   with:
-      #     appcenter_user: ${{ env.AC_USER }}
-      #     appcenter_app: ${{ env.AC_APP_IOS }}
-      #     branch_name: ${{ env.BRANCH_NAME }}
-      #     settings_branch_name: ${{ env.CONFIG_BRANCH }}
-      #     appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
+      - name: Build Android
+        id: appcenter-build-android
+        uses: ./.github/actions/appcenter
+        with:
+          appcenter_user: ${{ env.AC_USER }}
+          appcenter_app: ${{ env.AC_APP_ANDROID }}
+          branch_name: ${{ env.BRANCH_NAME }}
+          settings_branch_name: ${{ env.CONFIG_BRANCH }}
+          appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
 
-      # - name: Build Android
-      #   id: appcenter-build-android
-      #   uses: ./.github/actions/appcenter
-      #   with:
-      #     appcenter_user: ${{ env.AC_USER }}
-      #     appcenter_app: ${{ env.AC_APP_ANDROID }}
-      #     branch_name: ${{ env.BRANCH_NAME }}
-      #     settings_branch_name: ${{ env.CONFIG_BRANCH }}
-      #     appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      # - name: Get yarn cache directory path
-      #   id: yarn-cache-dir-path
-      #   run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Restore node_modules from cache
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
-      # - name: Restore node_modules from cache
-      #   uses: actions/cache@v2
-      #   id: yarn-cache
-      #   with:
-      #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-      #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-      # - name: Install dependencies
-      #   run: yarn install --frozen-lockfile
+      - name: Linters
+        id: yarn-lint
+        run: yarn lint:check
 
-      # - name: Linters
-      #   id: yarn-lint
-      #   run: yarn lint:check
+      - name: Tests
+        id: yarn-test
+        run: yarn test
 
-      # - name: Tests
-      #   id: yarn-test
-      #   run: yarn test
+      - name: Stop builds if Test or Linter failed
+        if: always() && (steps.yarn-lint.outcome == 'failure' || steps.yarn-test.outcome == 'failure')
+        run: |
+          CODE_IOS=`curl --write-out '%{http_code}' \
+              --silent \
+              --output /dev/null \
+              --request PATCH \
+              --header 'accept: application/json' \
+              --header 'Content-Type: application/json' \
+              --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_IOS }}/builds/${{ steps.appcenter-build-ios.outputs.build_id }}' \
+              --data '{
+                "status": "cancelling"
+              }'`
 
-      # - name: Stop builds if Test or Linter failed
-      #   if: always() && (steps.yarn-lint.outcome == 'failure' || steps.yarn-test.outcome == 'failure')
-      #   run: |
-      #     CODE_IOS=`curl --write-out '%{http_code}' \
-      #         --silent \
-      #         --output /dev/null \
-      #         --request PATCH \
-      #         --header 'accept: application/json' \
-      #         --header 'Content-Type: application/json' \
-      #         --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-      #         --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_IOS }}/builds/${{ steps.appcenter-build-ios.outputs.build_id }}' \
-      #         --data '{
-      #           "status": "cancelling"
-      #         }'`
+          CODE_ANDROID=`curl --write-out '%{http_code}' \
+              --silent \
+              --output /dev/null \
+              --request PATCH \
+              --header 'accept: application/json' \
+              --header 'Content-Type: application/json' \
+              --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_ANDROID }}/builds/${{ steps.appcenter-build-android.outputs.build_id }}' \
+              --data '{
+                "status": "cancelling"
+              }'`
 
-      #     CODE_ANDROID=`curl --write-out '%{http_code}' \
-      #         --silent \
-      #         --output /dev/null \
-      #         --request PATCH \
-      #         --header 'accept: application/json' \
-      #         --header 'Content-Type: application/json' \
-      #         --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-      #         --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_ANDROID }}/builds/${{ steps.appcenter-build-android.outputs.build_id }}' \
-      #         --data '{
-      #           "status": "cancelling"
-      #         }'`
+          SLACK=`curl --write-out '%{http_code}' \
+              --silent \
+              --output /dev/null \
+              --request POST \
+              --header 'Content-Type: application/json' \
+              --url '${{ secrets.SLACK_URL }}' \
+              --data '{
+                  "blocks": [
+                      {
+                          "type": "header",
+                          "text": {
+                              "type": "plain_text",
+                              "text": ":x:   Build Action Failed",
+                              "emoji": true
+                          }
+                      },
+                      {
+                          "type": "section",
+                          "text": {
+                              "type": "mrkdwn",
+                              "text": "Hey <@${{ steps.slack_id.outputs.slack_id }}>, the build action have failed."
+                          }
+                      },
+                      {
+                          "type": "section",
+                          "text": {
+                              "type": "mrkdwn",
+                              "text": "<${{ github.server_url }}${{ github.repository }}/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions."
+                          }
+                      }
+                  ]
+              }'`          
 
-      #     echo "❌ GitHub Action failed"
+          echo "❌ GitHub Action failed"
 
-      #     if [ $CODE_IOS = 200 ]
-      #     then
-      #       echo "✅ iOS build stopped"
-      #     else
-      #       echo "❌ Can't stop iOS build. Please go to AppCenter and stop it manually."
-      #       echo "https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ env.AC_APP_IOS }}/build/branches/${{ env.BRANCH_NAME }}/builds/${{ steps.appcenter-build-ios.outputs.build_id }}"
-      #     fi
+          if [ $CODE_IOS = 200 ]
+          then
+            echo "✅ iOS build stopped"
+          else
+            echo "❌ Can't stop iOS build. Please go to AppCenter and stop it manually."
+            echo "https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ env.AC_APP_IOS }}/build/branches/${{ env.BRANCH_NAME }}/builds/${{ steps.appcenter-build-ios.outputs.build_id }}"
+          fi
 
-      #     if [ $CODE_ANDROID = 200 ]
-      #     then
-      #       echo "✅ Android build stopped"
-      #     else
-      #       echo "❌ Can't stop Android build. Please go to AppCenter and stop it manually."
-      #       echo "https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ env.AC_APP_ANDROID }}/build/branches/${{ env.BRANCH_NAME }}/builds/${{ steps.appcenter-build-android.outputs.build_id }}"
-      #     fi
+          if [ $CODE_ANDROID = 200 ]
+          then
+            echo "✅ Android build stopped"
+          else
+            echo "❌ Can't stop Android build. Please go to AppCenter and stop it manually."
+            echo "https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ env.AC_APP_ANDROID }}/build/branches/${{ env.BRANCH_NAME }}/builds/${{ steps.appcenter-build-android.outputs.build_id }}"
+          fi
