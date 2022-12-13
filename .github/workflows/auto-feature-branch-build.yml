@@ -42,7 +42,7 @@ jobs:
 
       - name: Linters
         id: yarn-lint
-        run: yarn lint
+        run: yarn lint:check
 
       - name: Tests
         id: yarn-test
