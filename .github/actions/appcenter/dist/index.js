@@ -101,7 +101,6 @@ require('./sourcemap-register.js');
             const appcenter_app = core.getInput('appcenter_app');
             const branch_name = core.getInput('branch_name');
             const settings_branch_name = core.getInput('settings_branch_name');
-            core.info(`Starting CI process for branch: ${branch_name}...`);
             core.info('');
             core.info('🔄 Step 1: Check if there is a build in progress');
             const current_status = yield (0, axios_1.default)(
@@ -159,7 +158,11 @@ require('./sourcemap-register.js');
                   accept: 'application/json',
                   'X-API-Token': appcenter_token,
                 },
-                // This is to avoid crash on 404, because it an expected value.
+                /**
+                 * This is to avoid crash on 404, because it an expected value.
+                 *  200: means that the branch has a configuration.
+                 *  404: means that the branch doesn't have a configuration.
+                 */
                 validateStatus: () => true,
               },
             );
@@ -229,9 +232,11 @@ require('./sourcemap-register.js');
             core.info(
               `✅ Build started successfully with id: ${start_build.data.id}.`,
             );
+            // As output you'll get the build id, so you can use it in the next steps to call the AppCenter API.
             return core.setOutput('build_id', start_build.data.id);
           } catch (error) {
-            if (error instanceof Error) core.setFailed(error.message);
+            if (error instanceof Error)
+              return core.setFailed(`❌ The flow has failed. ${error.message}`);
           }
         });
       }
