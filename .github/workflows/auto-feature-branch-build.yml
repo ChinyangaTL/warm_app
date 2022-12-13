@@ -132,7 +132,7 @@ jobs:
                           "type": "section",
                           "text": {
                               "type": "mrkdwn",
-                              "text": "<${{ github.server_url }}${{ github.repository }}/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions."
+                              "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions."
                           }
                       }
                   ]
