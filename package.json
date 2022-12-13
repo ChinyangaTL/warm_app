@@ -1,6 +1,6 @@
 {
   "name": "WarmApp",
-  "version": "0.6.12-0",
+  "version": "0.6.17",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -9,6 +9,8 @@
     "test": "jest ./__tests__",
     "np": "np --no-publish",
     "postversion": "react-native-version",
+    "clean-cache": "rm -rf $TMPDIR/react-*; rm -rf $TMPDIR/haste-*; rm -rf $TMPDIR/metro-*; watchman watch-del-all",
+    "clean-all": "yarn clean-cache; rm yarn.lock; rm -rf packages/*/ios/build; rm -rf packages/*/ios/Pods; rm packages/*/ios/Podfile.lock; rm -rf ./ios/Pods; rm -rf ./ios/build; rm -rf ./android/app/build; rm -rf ./android/build; rm -rf ./android/.gradle; rm -rf node_modules; for d in packages/*/node_modules; do echo $d; rm -rf $d; done",
     "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },

@@ -6,18 +6,129 @@ on:
       - 'MT-**'
 
 env:
-  AC_USER: Warm_App
+  AC_USER: Warm_App2
   AC_APP_ANDROID: android_prod
   AC_APP_IOS: ios_production
   CONFIG_BRANCH: feature-branch-config
+  BRANCH_NAME: ${{ github.ref_name }}
 
 jobs:
   run-build-on-appcenter:
-    name: Feature/Fix Branch Build
+    name: Branch Build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Echo Test
-        id: echo
+      - name: Checkout Git Repo
+        uses: actions/checkout@v3
+
+      - name: Slack ID
+        id: slack
         run: |
-          echo "::set-output name=code::200"
+          CONTRIBUTOR=`jq .${{ github.actor }} contributors.json | sed "s/\"//g"`
+
+          if [ $CONTRIBUTOR = null ]
+          then
+            echo "❌ ${{ github.actor }} is not added in contributors.json"
+            echo "Please, check ${{ github.server_url }}/${{ github.repository }}/CONTRIBUTING.md#slack-integration, to add your Slack ID to receive notifications."
+            exit 1
+          else
+            echo "slack_id=$CONTRIBUTOR" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build iOS
+        id: appcenter-build-ios
+        uses: ./.github/actions/appcenter-build
+        with:
+          appcenter_user: ${{ env.AC_USER }}
+          appcenter_app: ${{ env.AC_APP_IOS }}
+          branch_name: ${{ env.BRANCH_NAME }}
+          settings_branch_name: ${{ env.CONFIG_BRANCH }}
+          appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
+
+      - name: Build Android
+        id: appcenter-build-android
+        uses: ./.github/actions/appcenter-build
+        with:
+          appcenter_user: ${{ env.AC_USER }}
+          appcenter_app: ${{ env.AC_APP_ANDROID }}
+          branch_name: ${{ env.BRANCH_NAME }}
+          settings_branch_name: ${{ env.CONFIG_BRANCH }}
+          appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+
+      - name: Restore node_modules from cache
+        uses: actions/cache@v3.0.11
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Linters
+        id: yarn-lint
+        run: yarn lint:check
+
+      - name: Tests
+        id: yarn-test
+        run: yarn test
+
+      - name: Stop builds if something failed
+        if: always() && (steps.yarn-lint.outcome == 'failure' || steps.yarn-test.outcome == 'failure' || steps.appcenter-build-ios.outcome == 'failure' || steps.appcenter-build-android.outcome == 'failure')
+        run: |
+          CODE_IOS=`curl --write-out '%{http_code}' \
+              --silent \
+              --output /dev/null \
+              --request PATCH \
+              --header 'accept: application/json' \
+              --header 'Content-Type: application/json' \
+              --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_IOS }}/builds/${{ steps.appcenter-build-ios.outputs.build_id }}' \
+              --data '{
+                "status": "cancelling"
+              }'`
+
+          CODE_ANDROID=`curl --write-out '%{http_code}' \
+              --silent \
+              --output /dev/null \
+              --request PATCH \
+              --header 'accept: application/json' \
+              --header 'Content-Type: application/json' \
+              --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_ANDROID }}/builds/${{ steps.appcenter-build-android.outputs.build_id }}' \
+              --data '{
+                "status": "cancelling"
+              }'`
+
+          SLACK_MESSAGE=`curl --write-out '%{http_code}' \
+              --silent \
+              --output /dev/null \
+              --request POST \
+              --header 'Content-Type: application/json' \
+              --url '${{ secrets.SLACK_URL }}' \
+              --data '{
+                "text": ":x:   *GitHub Action Failed*\n\nHey <@${{ steps.slack.outputs.slack_id }}>, the build action has failed in the \`${{ env.BRANCH_NAME }}\` branch.\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions.",
+              }'`
+
+          echo "❌ GitHub Action failed"
+
+          if [ $CODE_IOS = 200 ]
+          then
+            echo "✅ iOS build stopped"
+          else
+            echo "❌ Can't stop iOS build. Please go to AppCenter and stop it manually."
+            echo "https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ env.AC_APP_IOS }}/build/branches/${{ env.BRANCH_NAME }}/builds/${{ steps.appcenter-build-ios.outputs.build_id }}"
+          fi
+
+          if [ $CODE_ANDROID = 200 ]
+          then
+            echo "✅ Android build stopped"
+          else
+            echo "❌ Can't stop Android build. Please go to AppCenter and stop it manually."
+            echo "https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ env.AC_APP_ANDROID }}/build/branches/${{ env.BRANCH_NAME }}/builds/${{ steps.appcenter-build-android.outputs.build_id }}"
+          fi
