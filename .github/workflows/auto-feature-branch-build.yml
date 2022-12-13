@@ -36,8 +36,6 @@ jobs:
       - name: Echo Yarn Lint
         if: always() && steps.yarn-lint.outcome == 'failure'
         run: |
-          sleep 10s
-
           CODE=`curl --write-out '%{http_code}' \
               --silent \
               --output /dev/null \
@@ -45,7 +43,7 @@ jobs:
               --header 'accept: application/json' \
               --header 'Content-Type: application/json' \
               --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_ANDROID }}/builds/${{ steps.appcenter-build.outputs.build_id }}' \
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_IOS }}/builds/${{ steps.appcenter-build.outputs.build_id }}' \
               --data '{ 
                 "status": "cancelling"
               }'`
