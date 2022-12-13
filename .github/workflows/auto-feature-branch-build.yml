@@ -14,21 +14,21 @@ env:
 
 jobs:
   run-build-on-appcenter:
-    name: Feature/Fix Branch Build
+    name: Branch Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Git Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Slack ID
-        id: slack_id
+        id: slack
         run: |
           CONTRIBUTOR=`jq .${{ github.actor }} contributors.json | sed "s/\"//g"`
 
           if [ $CONTRIBUTOR = null ]
           then
             echo "❌ ${{ github.actor }} is not added in contributors.json"
-            echo "Please, check ${{ github.server_url }}/${{ github.repository }}/CONTRIBUTING.md, to add your Slack ID and get notifications."
+            echo "Please, check ${{ github.server_url }}/${{ github.repository }}/CONTRIBUTING.md, to add your Slack ID to receive notifications."
             exit 1
           else
             echo "slack_id=$CONTRIBUTOR" >> $GITHUB_OUTPUT
@@ -36,7 +36,7 @@ jobs:
 
       - name: Build iOS
         id: appcenter-build-ios
-        uses: ./.github/actions/appcenter
+        uses: ./.github/actions/appcenter-build
         with:
           appcenter_user: ${{ env.AC_USER }}
           appcenter_app: ${{ env.AC_APP_IOS }}
@@ -46,7 +46,7 @@ jobs:
 
       - name: Build Android
         id: appcenter-build-android
-        uses: ./.github/actions/appcenter
+        uses: ./.github/actions/appcenter-build
         with:
           appcenter_user: ${{ env.AC_USER }}
           appcenter_app: ${{ env.AC_APP_ANDROID }}
@@ -59,7 +59,7 @@ jobs:
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
       - name: Restore node_modules from cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3.0.11
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -105,38 +105,32 @@ jobs:
                 "status": "cancelling"
               }'`
 
-          SLACK=`curl --write-out '%{http_code}' \
-              --silent \
-              --output /dev/null \
-              --request POST \
-              --header 'Content-Type: application/json' \
-              --url '${{ secrets.SLACK_URL }}' \
-              --data '{
-                  "blocks": [
-                      {
-                          "type": "header",
-                          "text": {
-                              "type": "plain_text",
-                              "text": ":x:   Build Action Failed",
-                              "emoji": true
-                          }
-                      },
-                      {
-                          "type": "section",
-                          "text": {
-                              "type": "mrkdwn",
-                              "text": "Hey <@${{ steps.slack_id.outputs.slack_id }}>, the build action have failed."
-                          }
-                      },
-                      {
-                          "type": "section",
-                          "text": {
-                              "type": "mrkdwn",
-                              "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions."
-                          }
-                      }
-                  ]
-              }'`          
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "blocks": [
+                {
+                    "type": "header",
+                    "text": {
+                        "type": "plain_text",
+                        "text": ":x:   Build Action Failed",
+                        "emoji": true
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "Hey <@${{ steps.slack.outputs.slack_id }}>, the build action have failed."
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions."
+                    }
+                }
+            ]
+          }' ${{ secrets.SLACK_URL }}
 
           echo "❌ GitHub Action failed"
 
