@@ -23,7 +23,7 @@ jobs:
       - name: Slack ID
         id: slack
         run: |
-          CONTRIBUTOR=`jq .${{ github.actor }} contributors.json | sed "s/\"//g"`
+          CONTRIBUTOR=`jq .${{ github.actor }} .github/actions/appcenter-build/contributors.json | sed "s/\"//g"`
 
           if [ $CONTRIBUTOR = null ]
           then
