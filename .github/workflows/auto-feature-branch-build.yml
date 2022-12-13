@@ -10,6 +10,7 @@ env:
   AC_APP_ANDROID: android_prod
   AC_APP_IOS: ios_production
   CONFIG_BRANCH: feature-branch-config
+  BRANCH_NAME: ${{ github.ref_name }}
 
 jobs:
   run-build-on-appcenter:
@@ -19,15 +20,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build
-        id: appcenter-build
+      - name: Build iOS
+        id: appcenter-build-ios
         uses: ./.github/actions/appcenter
         with:
           appcenter_user: ${{ env.AC_USER }}
           appcenter_app: ${{ env.AC_APP_IOS }}
-          branch_name: ${{ github.ref_name }}
+          branch_name: ${{ env.BRANCH_NAME }}
           settings_branch_name: ${{ env.CONFIG_BRANCH }}
           appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
+
+      # - name: Build Android
+      #   id: appcenter-build-android
+      #   uses: ./.github/actions/appcenter
+      #   with:
+      #     appcenter_user: ${{ env.AC_USER }}
+      #     appcenter_app: ${{ env.AC_APP_ANDROID }}
+      #     branch_name: ${{ github.ref_name }}
+      #     settings_branch_name: ${{ env.CONFIG_BRANCH }}
+      #     appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
 
       - name: Run Yarn Lint
         id: yarn-lint
@@ -36,17 +47,30 @@ jobs:
       - name: Echo Yarn Lint
         if: always() && steps.yarn-lint.outcome == 'failure'
         run: |
-          CODE=`curl --write-out '%{http_code}' \
+          CODE_IOS=`curl --write-out '%{http_code}' \
               --silent \
               --output /dev/null \
               --request PATCH \
               --header 'accept: application/json' \
               --header 'Content-Type: application/json' \
               --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_IOS }}/builds/${{ steps.appcenter-build.outputs.build_id }}' \
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_IOS }}/builds/${{ steps.appcenter-build-ios.outputs.build_id }}' \
               --data '{ 
                 "status": "cancelling"
               }'`
 
+          echo "❌ GitHub Action failed"
+
+          if [ $CODE_IOS = 200 ]
+          then
+            echo "✅ iOS build stopped"
+          else
+            echo "❌ Can't stop iOS build. Please go to AppCenter and stop it manually."
+            echo "https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ env.AC_APP_IOS }}/build/branches/${{ env.BRANCH_NAME }}/builds/${{ steps.appcenter-build-ios.outputs.build_id }}"
+          fi
+
+          echo "❌❌❌ Can't stop iOS build. Please go to AppCenter and stop it manually."
+          echo "https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ env.AC_APP_IOS }}/build/branches/${{ env.BRANCH_NAME }}/builds/${{ steps.appcenter-build-ios.outputs.build_id }}"
+
           echo $CODE
-          echo ${{ steps.appcenter-build.outputs.build_id }}
+          echo ${{ steps.appcenter-build-ios.outputs.build_id }}
