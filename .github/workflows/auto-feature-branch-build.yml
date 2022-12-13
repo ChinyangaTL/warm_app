@@ -79,7 +79,7 @@ jobs:
         run: yarn test
 
       - name: Stop builds if something failed
-        if: always() && (steps.yarn-lint.outcome == 'failure' || steps.yarn-test.outcome == 'failure' || appcenter-build-ios.outcome == 'failure' || appcenter-build-android.outcome == 'failure')
+        if: always() && (steps.yarn-lint.outcome == 'failure' || steps.yarn-test.outcome == 'failure' || steps.appcenter-build-ios.outcome == 'failure' || steps.appcenter-build-android.outcome == 'failure')
         run: |
           CODE_IOS=`curl --write-out '%{http_code}' \
               --silent \
