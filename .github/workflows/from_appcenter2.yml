@@ -1,4 +1,4 @@
-name: Action From AppCenter
+name: Action From AppCenter 2 Slack
 
 on: repository_dispatch
 
