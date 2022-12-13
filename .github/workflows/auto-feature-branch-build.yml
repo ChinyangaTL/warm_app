@@ -90,5 +90,5 @@ jobs:
             echo "✅ Android build stopped"
           else
             echo "❌ Can't stop Android build. Please go to AppCenter and stop it manually."
-            echo "https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ env.AC_APP_ANDROID }}/build/branches/${{ env.BRANCH_NAME }}/builds/${{ steps.appcenter-build-ios.outputs.build_id }}"
+            echo "https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ env.AC_APP_ANDROID }}/build/branches/${{ env.BRANCH_NAME }}/builds/${{ steps.appcenter-build-android.outputs.build_id }}"
           fi
