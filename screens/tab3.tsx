@@ -3,10 +3,7 @@ import {View, Text} from 'react-native';
 
 const Tab3 = () => {
   <View>
-
     <Text>Tab3</Text>
-
-    
   </View>;
 };
 
