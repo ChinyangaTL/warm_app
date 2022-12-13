@@ -22,8 +22,17 @@ jobs:
 
       - name: Test
         run: |
-          NEW_VERSION=`jq .${{ github.actor }} contributors.json | sed "s/\"//g"`
-          echo $NEW_VERSION
+          CONTRIBUTOR=`jq .${{ github.actor }} contributors.json | sed "s/\"//g"`
+
+          if [ $CONTRIBUTOR = null ]
+          then
+            echo "❌ ${{ github.actor }} is not added in contributors.json"
+            echo "Please, check documentation to add your slack id in the contributors.json file."
+            exit 1
+          else
+            echo "::set-output name=slack_id::$CONTRIBUTOR"
+            echo $CONTRIBUTOR
+          fi
 
       # - name: Build iOS
       #   id: appcenter-build-ios
