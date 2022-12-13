@@ -1,4 +1,4 @@
-name: Action From AppCenter
+name: Action From AppCenter 2 Slack
 
 on: repository_dispatch
 
@@ -6,9 +6,6 @@ jobs:
   from-app-center:
     runs-on: ubuntu-latest
     steps:
-      - name: echo
-        run: echo "Hello World!"
-
       - name: Hola
         run: |
           SLACK_MESSAGE=`curl --write-out '%{http_code}' \
