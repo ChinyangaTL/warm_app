@@ -34,7 +34,7 @@ jobs:
         run: yarn lint
 
       - name: Echo Yarn Lint
-        if: ${{ steps.yarn-lint.outcome }} == 'failure'
+        if: always() && steps.yarn-lint.outcome == 'failure'
         run: |
           CODE=`curl --write-out '%{http_code}' \
               --silent \
