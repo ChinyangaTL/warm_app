@@ -36,6 +36,8 @@ jobs:
       - name: Echo Yarn Lint
         if: always() && steps.yarn-lint.outcome == 'failure'
         run: |
+          sleep 10s
+
           CODE=`curl --write-out '%{http_code}' \
               --silent \
               --output /dev/null \
