@@ -20,7 +20,8 @@ jobs:
       - name: Checkout Git Repo
         uses: actions/checkout@v2
 
-      - name: Test
+      - name: Slack ID
+        id: slack_id
         run: |
           CONTRIBUTOR=`jq .${{ github.actor }} contributors.json | sed "s/\"//g"`
 
@@ -33,6 +34,9 @@ jobs:
             echo "::set-output name=slack_id::$CONTRIBUTOR"
             echo $CONTRIBUTOR
           fi
+
+      - name: Echo Slack id
+        run: echo ${{ steps.slack_id.outputs.slack_id }}
 
       # - name: Build iOS
       #   id: appcenter-build-ios
