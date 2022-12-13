@@ -70,7 +70,7 @@ jobs:
               --header 'accept: application/json' \
               --header 'Content-Type: application/json' \
               --header 'X-API-Token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}' \
-              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_ANDROID }}/builds/${{ steps.appcenter-build-ios.outputs.build_id }}' \
+              --url 'https://api.appcenter.ms/v0.1/apps/${{ env.AC_USER }}/${{ env.AC_APP_ANDROID }}/builds/${{ steps.appcenter-build-android.outputs.build_id }}' \
               --data '{ 
                 "status": "cancelling"
               }'`
