@@ -101,9 +101,9 @@ require('./sourcemap-register.js');
             const appcenter_app = core.getInput('appcenter_app');
             const branch_name = core.getInput('branch_name');
             const settings_branch_name = core.getInput('settings_branch_name');
-            core.debug(`Starting CI process for branch: ${branch_name}...`);
-            core.debug('');
-            core.debug('🔄 Step 1: Check if there is a build in progress');
+            core.info(`Starting CI process for branch: ${branch_name}...`);
+            core.info('');
+            core.info('🔄 Step 1: Check if there is a build in progress');
             const current_status = yield (0, axios_1.default)(
               `https://api.appcenter.ms/v0.1/apps/${appcenter_user}/${appcenter_app}/branches/${branch_name}/builds`,
               {
@@ -145,12 +145,12 @@ require('./sourcemap-register.js');
                   `❌ Error finishing the current build. ${finish_current_build}`,
                 );
               }
-              core.debug('✅ Current build stopped.');
+              core.info('✅ Current build stopped.');
             } else {
-              core.debug('✅ No build in progress.');
+              core.info('✅ No build in progress.');
             }
-            core.debug('');
-            core.debug('🔄 Step 2: Set build configuration');
+            core.info('');
+            core.info('🔄 Step 2: Set build configuration');
             const current_settings = yield (0, axios_1.default)(
               `https://api.appcenter.ms/v0.1/apps/${appcenter_user}/${appcenter_app}/branches/${branch_name}/config`,
               {
@@ -185,7 +185,7 @@ require('./sourcemap-register.js');
                   `❌ Error deleting the current build settings of the branch. ${delete_branch_config}`,
                 );
               }
-              core.debug('✅ Clean previous build configuration.');
+              core.info('✅ Clean previous build configuration.');
             }
             const set_branch = yield (0, axios_1.default)(
               `https://api.appcenter.ms/v0.1/apps/${appcenter_user}/${appcenter_app}/branches/${branch_name}/config`,
@@ -206,9 +206,9 @@ require('./sourcemap-register.js');
                 `❌ Error setting the build configuration. ${set_branch}`,
               );
             }
-            core.debug('✅ Build configuration set.');
-            core.debug('');
-            core.debug('🔄 Step 3: Start build');
+            core.info('✅ Build configuration set.');
+            core.info('');
+            core.info('🔄 Step 3: Start build');
             const start_build = yield (0, axios_1.default)(
               `https://api.appcenter.ms/v0.1/apps/${appcenter_user}/${appcenter_app}/branches/${branch_name}/builds`,
               {
@@ -226,7 +226,7 @@ require('./sourcemap-register.js');
             if (start_build.status !== 200) {
               return core.setFailed(`❌ Error starting build. ${start_build}`);
             }
-            core.debug(
+            core.info(
               `✅ Build started successfully with id: ${start_build.data.id}.`,
             );
             return core.setOutput('build_id', start_build.data.id);
