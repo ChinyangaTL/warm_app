@@ -31,7 +31,7 @@ jobs:
             echo "Please, check the CONTRIBUTING.md, to add your Slack ID and get notifications."
             exit 1
           else
-            echo "{slack_id}={$CONTRIBUTOR}" >> $GITHUB_OUTPUT
+            echo "slack_id=$CONTRIBUTOR" >> $GITHUB_OUTPUT
           fi
 
       - name: Echo Slack id
