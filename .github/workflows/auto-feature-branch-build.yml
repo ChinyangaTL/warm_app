@@ -105,9 +105,15 @@ jobs:
                 "status": "cancelling"
               }'`
 
-          curl -X POST -H 'Content-type: application/json' --data '{
-            "text": ":x:   GitHub Action Failed\n\nHey <@${{ steps.slack.outputs.slack_id }}>, the build action have failed.\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions.",
-          }' ${{ secrets.SLACK_URL }}
+          SLACK_MESSAGE=`curl --write-out '%{http_code}' \
+              --silent \
+              --output /dev/null \
+              --request POST \
+              --header 'Content-Type: application/json' \
+              --url '${{ secrets.SLACK_URL }}' \
+              --data '{
+                "text": ":x:   *GitHub Action Failed*\n\nHey <@${{ steps.slack.outputs.slack_id }}>, the build action have failed.\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions.",
+              }'`
 
           echo "❌ GitHub Action failed"
 
