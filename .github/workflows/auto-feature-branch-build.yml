@@ -22,7 +22,8 @@ jobs:
 
       - name: Test
         run: |
-          echo ${{ github.actor }}
+          NEW_VERSION=`jq .${{ github.actor }} contributors.json | sed "s/\"//g"`
+          echo $NEW_VERSION
 
       # - name: Build iOS
       #   id: appcenter-build-ios
