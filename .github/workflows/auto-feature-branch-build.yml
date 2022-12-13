@@ -112,7 +112,7 @@ jobs:
               --header 'Content-Type: application/json' \
               --url '${{ secrets.SLACK_URL }}' \
               --data '{
-                "text": ":x:   *GitHub Action Failed*\n\nHey <@${{ steps.slack.outputs.slack_id }}>, the build action have failed.\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions.",
+                "text": ":x:   *GitHub Action Failed*\n\nHey <@${{ steps.slack.outputs.slack_id }}>, the build action has failed in the `${{ env.BRANCH_NAME }}` branch.\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Here you can check the report> inside GitHub Actions.",
               }'`
 
           echo "❌ GitHub Action failed"
