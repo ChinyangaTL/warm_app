@@ -49,3 +49,4 @@ jobs:
               }'`
 
           echo $CODE
+          echo ${{ steps.appcenter-build.outputs.build_id }}
