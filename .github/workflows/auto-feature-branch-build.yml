@@ -17,7 +17,7 @@ jobs:
     name: Feature/Fix Branch Build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Git Repo
         uses: actions/checkout@v2
 
       - name: Build iOS
@@ -39,6 +39,22 @@ jobs:
           branch_name: ${{ env.BRANCH_NAME }}
           settings_branch_name: ${{ env.CONFIG_BRANCH }}
           appcenter_token: ${{ secrets.APP_CENTER_ACCESS_TOKEN }}
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Restore node_modules from cache
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Linters
         id: yarn-lint
