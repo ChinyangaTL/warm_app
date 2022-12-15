@@ -3,7 +3,8 @@ name: Auto Feature/Fix Branch Build
 on:
   push:
     branches:
-      - 'MT-**'
+      - 'MT-**-feat-**'
+      - 'MT-**-fix-**'
 
 env:
   AC_USER: Warm_App2
