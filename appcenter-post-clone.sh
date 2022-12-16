@@ -6,7 +6,7 @@ curl --write-out '%{http_code}' \
     --output /dev/null \
     --request POST \
     --header 'Content-Type: application/json' \
-    --url '${{ secrets.SLACK_URL }}' \
+    --url '${SLACK_URL}' \
     --data '{
       "text": "Hello from post clone",
     }'
