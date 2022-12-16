@@ -2,7 +2,7 @@ echo "123PROBANDO"
 echo "456PROBANDO" > /dev/null
 printf "\nCreating AppCenter key file\n\n"
 
-file_ios="$APPCENTER_SOURCE_DIRECTORY/ios/holdedmobile/AppCenter-Config.plist"
+file_ios="$APPCENTER_SOURCE_DIRECTORY/ios/WarmApp/AppCenter-Config.plist"
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" >> $file_ios
 echo "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"https://www.apple.com/DTDs/PropertyList-1.0.dtd\">" >> $file_ios
 echo "<plist version=\"1.0\">" >> $file_ios
