@@ -31,7 +31,7 @@ jobs:
 
           gh api \
             -H "Accept: application/vnd.github+json" \
-            /repos/nicolascavallin/warm_app/commits/${{ inputs.commit_id }}
+            /repos/nicolascavallin/warm_app/commits/${{ inputs.commit_id }} --jq '.author.login'
 
           SLACK_MESSAGE=`curl --write-out '%{http_code}' \
               --silent \
