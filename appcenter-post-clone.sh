@@ -33,7 +33,15 @@ curl \
   -H "Authorization: Bearer $GITHUB_TOKEN"\
   -H "X-GitHub-Api-Version: 2022-11-28" \
   https://api.github.com/repos/nicolascavallin/warm_app/actions/workflows/from_appcenter2.yml/dispatches \
-  -d '{"ref":"main","inputs":{"commit_id":"$COMMIT_ID","build_id":"$APPCENTER_BUILD_ID","os":"$APPCENTER_BUILD_AGENT_OS","status":"$AGENT_JOBSTATUS"}}'
+  -d '{
+  "ref": "main",
+  "inputs": {
+    "commit_id": "'$COMMIT_ID'",
+    "build_id": "'$APPCENTER_BUILD_ID'",
+    "os": "'$APPCENTER_BUILD_AGENT_OS'",
+    "status": "'$AGENT_JOBSTATUS'"
+  }
+}'
   # -d '{"ref":"topic-branch","inputs":{"name":"Mona the Octocat","home":"San Francisco, CA"}}'
 
 return exit 1
