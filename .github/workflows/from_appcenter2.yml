@@ -44,7 +44,7 @@ jobs:
               --header 'Content-Type: application/json' \
               --url '${{ secrets.SLACK_URL }}' \
               --data '{
-                "text": "Hello world branch: ${{ build_id }}",
+                "text": "Hello world branch: ${{ inputs.build_id }}",
               }'`
       # - name: Hola
       #   run: |
