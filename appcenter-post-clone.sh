@@ -37,9 +37,9 @@ curl \
   "ref": "main",
   "inputs": {
     "commit_id": "'$COMMIT_ID'",
-    "build_id": "'$APPCENTER_BUILD_ID'",
-    "os": "'$APPCENTER_BUILD_AGENT_OS'",
-    "status": "'$AGENT_JOBSTATUS'"
+    "build_id": "'$COMMIT_ID'",
+    "os": "'$COMMIT_ID'",
+    "status": "'$COMMIT_ID'"
   }
 }'
   # -d '{"ref":"topic-branch","inputs":{"name":"Mona the Octocat","home":"San Francisco, CA"}}'
