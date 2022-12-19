@@ -44,5 +44,5 @@ jobs:
               --header 'Content-Type: application/json' \
               --url '${{ secrets.SLACK_URL }}' \
               --data '{
-                "text": "Hello world branch: ${{$GITHUB_AUTHOR}}",
+                "text": "Hello world branch: ${GITHUB_AUTHOR}",
               }'`
