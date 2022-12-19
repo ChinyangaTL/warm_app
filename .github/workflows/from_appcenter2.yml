@@ -2,6 +2,15 @@ name: Action From AppCenter 2 Slack
 
 on:
   workflow_dispatch:
+    inputs:
+      ios_build_id:
+        description: 'A username passed from the caller workflow'
+        required: true
+        type: string
+      android_build_id:
+        description: 'A username passed from the caller workflow'
+        required: true
+        type: string
 
 jobs:
   from-app-center:
