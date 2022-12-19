@@ -3,15 +3,19 @@ name: Action From AppCenter 2 Slack
 on:
   workflow_dispatch:
     inputs:
-      ios_build_id:
-        description: 'A username passed from the caller workflow'
-        required: true
-        type: string
-      android_build_id:
-        description: 'A username passed from the caller workflow'
-        required: true
-        type: string
       commit_id:
+        description: 'The commit id that triggered the build'
+        required: true
+        type: string
+      build_id:
+        description: 'The build id'
+        required: true
+        type: string
+      os:
+        description: 'A username passed from the caller workflow'
+        required: true
+        type: string
+      status:
         description: 'A username passed from the caller workflow'
         required: true
         type: string
@@ -26,16 +30,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Hola
+      - name: Chau
         run: |
-
-          THIS_COMMIT=`git rev-parse HEAD`
-
-          echo "THIS_COMMIT: $THIS_COMMIT"
-
-          GITHUB_AUTHOR=`gh api \
-            -H "Accept: application/vnd.github+json" \
-            /repos/nicolascavallin/warm_app/commits/${{ inputs.commit_id }} --jq '.author.login'`
+          echo ${{ inputs.commit_id }}
+          echo ${{ inputs.build_id }}
+          echo ${{ inputs.os }}
+          echo ${{ inputs.status }}
 
           SLACK_MESSAGE=`curl --write-out '%{http_code}' \
               --silent \
@@ -44,5 +44,25 @@ jobs:
               --header 'Content-Type: application/json' \
               --url '${{ secrets.SLACK_URL }}' \
               --data '{
-                "text": "Hello world branch: ${GITHUB_AUTHOR}",
+                "text": "Hello world branch: ${{ build_id }}",
               }'`
+      # - name: Hola
+      #   run: |
+
+      #     THIS_COMMIT=`git rev-parse HEAD`
+
+      #     echo "THIS_COMMIT: $THIS_COMMIT"
+
+      #     GITHUB_AUTHOR=`gh api \
+      #       -H "Accept: application/vnd.github+json" \
+      #       /repos/nicolascavallin/warm_app/commits/${{ inputs.commit_id }} --jq '.author.login'`
+
+      #     SLACK_MESSAGE=`curl --write-out '%{http_code}' \
+      #         --silent \
+      #         --output /dev/null \
+      #         --request POST \
+      #         --header 'Content-Type: application/json' \
+      #         --url '${{ secrets.SLACK_URL }}' \
+      #         --data '{
+      #           "text": "Hello world branch: ${{ GITHUB_AUTHOR }}",
+      #         }'`

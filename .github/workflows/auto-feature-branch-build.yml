@@ -3,7 +3,8 @@ name: Auto Feature/Fix Branch Build
 on:
   push:
     branches:
-      - 'MT-**'
+      - 'MT-**-feat-**'
+      - 'MT-**-fix-**'
 
 env:
   AC_USER: Warm_App2
@@ -23,7 +24,7 @@ jobs:
       - name: Slack ID
         id: slack
         run: |
-          CONTRIBUTOR=`jq .${{ github.actor }} contributors.json | sed "s/\"//g"`
+          CONTRIBUTOR=`jq .${{ github.actor }} .github/actions/appcenter-build/contributors.json | sed "s/\"//g"`
 
           if [ $CONTRIBUTOR = null ]
           then
