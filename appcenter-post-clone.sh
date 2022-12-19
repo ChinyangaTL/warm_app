@@ -25,10 +25,4 @@ COMMIT_ID=$(git rev-parse HEAD)
 
 echo $COMMIT_ID
 
-curl -X POST -H "Content-type: application/json" -H "Authorization: Bearer $GITHUB_TOKEN" \ 
-  --data '{
-    "commit_id": "$COMMIT_ID",
-    "build_id": "$APPCENTER_BUILD_ID",
-    "os": "$APPCENTER_BUILD_AGENT_OS",
-    "status": "$AGENT_JOBSTATUS",
-  }' https://api.github.com/repos/nicolascavallin/warm_app/actions/workflows/from_appcenter2.yml/dispatches
+curl -X POST -H "Content-type: application/json" -H "Authorization: Bearer $GITHUB_TOKEN" \ --data '{  "commit_id": "$COMMIT_ID",  "build_id": "$APPCENTER_BUILD_ID",  "os": "$APPCENTER_BUILD_AGENT_OS",  "status": "$AGENT_JOBSTATUS",}' https://api.github.com/repos/nicolascavallin/warm_app/actions/workflows/from_appcenter2.yml/dispatches
