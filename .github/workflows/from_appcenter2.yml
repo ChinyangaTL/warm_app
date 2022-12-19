@@ -11,6 +11,10 @@ on:
         description: 'A username passed from the caller workflow'
         required: true
         type: string
+      commit_id:
+        description: 'A username passed from the caller workflow'
+        required: true
+        type: string
 
 jobs:
   from-app-center:
@@ -21,9 +25,10 @@ jobs:
 
       - name: Hola
         run: |
-          cat .git/${{ github.ref }}
 
-          git for-each-ref --format='%(committerdate) %09 %(authorname) %09 %(refname)' --sort=committerdate
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            /repos/nicolascavallin/warm_app/commits/${{ inputs.commit_id }}
 
           SLACK_MESSAGE=`curl --write-out '%{http_code}' \
               --silent \
