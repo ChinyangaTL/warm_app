@@ -20,6 +20,8 @@ jobs:
         run: |
           echo ${{github}}
 
+          echo cat ${{ github.ref }}
+
           SLACK_MESSAGE=`curl --write-out '%{http_code}' \
               --silent \
               --output /dev/null \
