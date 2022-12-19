@@ -1,7 +1,7 @@
 name: Action From AppCenter 2 Slack
 
 on:
-  workflow_dispatch:
+  repository_dispatch:
 
 jobs:
   from-app-center:
