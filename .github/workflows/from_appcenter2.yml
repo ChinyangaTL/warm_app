@@ -1,14 +1,42 @@
 name: Action From AppCenter 2 Slack
 
 on:
-  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      commit_id:
+        description: 'The commit id that triggered the build'
+        required: true
+        type: string
+      build_id:
+        description: 'The build id'
+        required: true
+        type: string
+      os:
+        description: 'A username passed from the caller workflow'
+        required: true
+        type: string
+      status:
+        description: 'A username passed from the caller workflow'
+        required: true
+        type: string
+
+env:
+  GH_TOKEN: ${{ github.token }}
 
 jobs:
   from-app-center:
     runs-on: ubuntu-latest
     steps:
-      - name: Hola
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Chau
         run: |
+          echo ${{ inputs.commit_id }}
+          echo ${{ inputs.build_id }}
+          echo ${{ inputs.os }}
+          echo ${{ inputs.status }}
+
           SLACK_MESSAGE=`curl --write-out '%{http_code}' \
               --silent \
               --output /dev/null \
@@ -16,5 +44,25 @@ jobs:
               --header 'Content-Type: application/json' \
               --url '${{ secrets.SLACK_URL }}' \
               --data '{
-                "text": "Hello world",
+                "text": "Hello world branch: ${{ build_id }}",
               }'`
+      # - name: Hola
+      #   run: |
+
+      #     THIS_COMMIT=`git rev-parse HEAD`
+
+      #     echo "THIS_COMMIT: $THIS_COMMIT"
+
+      #     GITHUB_AUTHOR=`gh api \
+      #       -H "Accept: application/vnd.github+json" \
+      #       /repos/nicolascavallin/warm_app/commits/${{ inputs.commit_id }} --jq '.author.login'`
+
+      #     SLACK_MESSAGE=`curl --write-out '%{http_code}' \
+      #         --silent \
+      #         --output /dev/null \
+      #         --request POST \
+      #         --header 'Content-Type: application/json' \
+      #         --url '${{ secrets.SLACK_URL }}' \
+      #         --data '{
+      #           "text": "Hello world branch: ${{ GITHUB_AUTHOR }}",
+      #         }'`
