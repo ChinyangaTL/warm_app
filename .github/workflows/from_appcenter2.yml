@@ -21,9 +21,9 @@ jobs:
 
       - name: Hola
         run: |
-          echo ${{github}}
-
           cat .git/${{ github.ref }}
+
+          git for-each-ref --format='%(committerdate) %09 %(authorname) %09 %(refname)' --sort=committerdate
 
           SLACK_MESSAGE=`curl --write-out '%{http_code}' \
               --silent \
