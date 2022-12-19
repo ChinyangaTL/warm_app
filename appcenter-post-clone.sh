@@ -27,7 +27,7 @@ echo $COMMIT_ID
 
 # curl -X POST -H "Content-type: application/json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" --data '{ "ref": "main", inputs: { "commit_id": "$COMMIT_ID",  "build_id": "$APPCENTER_BUILD_ID",  "os": "$APPCENTER_BUILD_AGENT_OS",  "status": "$AGENT_JOBSTATUS" } }' https://api.github.com/repos/nicolascavallin/warm_app/actions/workflows/from_appcenter2.yml/dispatches
 
-OS=$([ -z ${APPCENTER_XCODE_PROJECT} && -z ${APPCENTER_XCODE_SCHEME} ] && echo "android" || echo "ios")
+OS=$([ -z ${APPCENTER_XCODE_PROJECT} && -z ${APPCENTER_XCODE_SCHEME} ] && echo "ios" || echo "android")
 
 curl \
   -X POST \
@@ -41,7 +41,7 @@ curl \
     "commit_id": "'$COMMIT_ID'",
     "build_id": "'$APPCENTER_BUILD_ID'",
     "os": "'$OS'",
-    "status": "'$COMMIT_ID'"
+    "status": "'$AGENT_JOBSTATUS'"
   }
 }'
   # -d '{"ref":"topic-branch","inputs":{"name":"Mona the Octocat","home":"San Francisco, CA"}}'
