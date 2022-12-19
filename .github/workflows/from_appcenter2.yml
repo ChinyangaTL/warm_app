@@ -29,6 +29,10 @@ jobs:
       - name: Hola
         run: |
 
+          THIS_COMMIT=`git rev-parse HEAD`
+
+          echo "THIS_COMMIT: $THIS_COMMIT"
+
           GITHUB_AUTHOR=`gh api \
             -H "Accept: application/vnd.github+json" \
             /repos/nicolascavallin/warm_app/commits/${{ inputs.commit_id }} --jq '.author.login'`
