@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Hola
         run: |
-          echo github
+          echo ${{github}}
 
           SLACK_MESSAGE=`curl --write-out '%{http_code}' \
               --silent \
