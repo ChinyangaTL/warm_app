@@ -46,4 +46,4 @@ curl \
 }'
   # -d '{"ref":"topic-branch","inputs":{"name":"Mona the Octocat","home":"San Francisco, CA"}}'
 
-return exit 1
+# return exit 1
