@@ -227,9 +227,9 @@ android {
             // storePassword System.getProperty("APPCENTER_KEYSTORE_PASSWORD")
             // keyAlias System.getProperty("APPCENTER_KEY_ALIAS")
             // keyPassword System.getProperty("APPCENTER_KEY_PASSWORD")
-            storePassword 'keyPasswordsss'
-            keyAlias 'android-branch-distributionsss'
-            keyPassword 'keyPasswordsss'
+            storePassword 'keyPassword'
+            keyAlias 'android-branch-distribution'
+            keyPassword 'keyPassword'
         }
     }
     buildTypes {
