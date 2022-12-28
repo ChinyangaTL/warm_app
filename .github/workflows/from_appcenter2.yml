@@ -79,7 +79,7 @@ jobs:
                 --header 'Content-Type: application/json' \
                 --url '${{ secrets.SLACK_URL }}' \
                 --data '{
-                  "text": ":white_check_mark:   *Build Succeeded*\n\nHey <@${{ steps.slack.outputs.slack_id }}>, your build for the \`${{ inputs.branch }}\` branch is ready.\n\n<https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ APP }}/build/branches/${{ inputs.branch }}/builds/${{ inputs.build_id }}|Here you can check the report> inside AppCenter.",
+                  "text": ":white_check_mark:   *Build Succeeded*\n\nHey <@${{ steps.slack.outputs.slack_id }}>, your build for the \`${{ inputs.branch }}\` branch is ready.\n\n<https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${APP}/build/branches/${{ inputs.branch }}/builds/${{ inputs.build_id }}|Here you can check the report> inside AppCenter.",
                 }'`          
           else
             SLACK_MESSAGE=`curl --write-out '%{http_code}' \
@@ -89,6 +89,6 @@ jobs:
                 --header 'Content-Type: application/json' \
                 --url '${{ secrets.SLACK_URL }}' \
                 --data '{
-                  "text": ":x:   *Build Failed*\n\nHey <@${{ steps.slack.outputs.slack_id }}>, your build for the \`${{ inputs.branch }}\` branch has failed.\n\n<https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ APP }}/build/branches/${{ inputs.branch }}/builds/${{ inputs.build_id }}|Here you can check the report> inside AppCenter.",
+                  "text": ":x:   *Build Failed*\n\nHey <@${{ steps.slack.outputs.slack_id }}>, your build for the \`${{ inputs.branch }}\` branch has failed.\n\n<https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${APP}/build/branches/${{ inputs.branch }}/builds/${{ inputs.build_id }}|Here you can check the report> inside AppCenter.",
                 }'`          
           fi
