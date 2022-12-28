@@ -29,6 +29,8 @@
 
 OS=$([[ -z ${APPCENTER_XCODE_PROJECT} && -z ${APPCENTER_XCODE_SCHEME} ]] && echo "android" || echo "ios")
 
+echo $OS
+
 # curl \
 #   -X POST \
 #   -H "Accept: application/vnd.github+json" \
