@@ -36,7 +36,7 @@ curl \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   https://api.github.com/repos/nicolascavallin/warm_app/actions/workflows/from_appcenter2.yml/dispatches \
   -d '{
-  "ref": "main",
+  "ref": "'$APPCENTER_BRANCH'",
   "inputs": {
     "branch": "'$APPCENTER_BRANCH'",
     "commit_id": "'$COMMIT_ID'",
