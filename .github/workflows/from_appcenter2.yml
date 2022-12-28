@@ -37,6 +37,12 @@ jobs:
           echo ${{ inputs.os }}
           echo ${{ inputs.status }}
 
+          GITHUB_AUTHOR=`gh api \
+            -H "Accept: application/vnd.github+json" \
+            /repos/nicolascavallin/warm_app/commits/${{ inputs.commit_id }} --jq '.author.login'`
+
+          echo $GITHUB_AUTHOR
+
           SLACK_MESSAGE=`curl --write-out '%{http_code}' \
               --silent \
               --output /dev/null \
