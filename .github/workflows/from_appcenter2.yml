@@ -1,8 +1,12 @@
-name: Action From AppCenter 2 Slack
+name: Post Build Status from AppCenter to Slack
 
 on:
   workflow_dispatch:
     inputs:
+      branch:
+        description: 'The branch that triggered the build'
+        required: true
+        type: string
       commit_id:
         description: 'The commit id that triggered the build'
         required: true
@@ -12,16 +16,25 @@ on:
         required: true
         type: string
       os:
-        description: 'A username passed from the caller workflow'
+        description: 'The OS target of the build'
         required: true
-        type: string
+        type: choice
+        options:
+          - ios
+          - android
       status:
-        description: 'A username passed from the caller workflow'
+        description: 'The build status from AppCenter'
         required: true
-        type: string
+        type: choice
+        options:
+          - Succeeded
+          - Failed
 
 env:
   GH_TOKEN: ${{ github.token }}
+  AC_USER: holdedtech
+  AC_APP_ANDROID: next-gen-dev-android
+  AC_APP_IOS: next-gen-dev-ios
 
 jobs:
   from-app-center:
@@ -30,45 +43,52 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Chau
+      - name: Commit Author
+        id: commit-author
         run: |
-          echo ${{ inputs.commit_id }}
-          echo ${{ inputs.build_id }}
-          echo ${{ inputs.os }}
-          echo ${{ inputs.status }}
-
-          GITHUB_AUTHOR=`gh api \
+          COMMIT_AUTHOR=`gh api \
             -H "Accept: application/vnd.github+json" \
-            /repos/nicolascavallin/warm_app/commits/${{ inputs.commit_id }} --jq '.author.login'`
+            /repos/${{ github.repository }}/commits/${{ inputs.commit_id }} --jq '.author.login'`
 
-          echo $GITHUB_AUTHOR
+          echo "commit_author=$COMMIT_AUTHOR" >> $GITHUB_OUTPUT
 
-          SLACK_MESSAGE=`curl --write-out '%{http_code}' \
-              --silent \
-              --output /dev/null \
-              --request POST \
-              --header 'Content-Type: application/json' \
-              --url '${{ secrets.SLACK_URL }}' \
-              --data '{
-                "text": "Hello world branch: ${{ inputs.build_id }}",
-              }'`
-      # - name: Hola
-      #   run: |
+      - name: Slack ID
+        id: slack
+        run: |
+          CONTRIBUTOR=`jq .${{ steps.commit-author.outputs.commit_author }} .github/actions/appcenter-build/contributors.json | sed "s/\"//g"`
 
-      #     THIS_COMMIT=`git rev-parse HEAD`
+          if [ $CONTRIBUTOR = null ]
+          then
+            echo "❌ ${{ steps.commit-author.outputs.commit_author }} is not added in slack_gh.json"
+            echo "Please, check ${{ github.server_url }}/${{ github.repository }}/CONTRIBUTING.md#slack-integration, to add your Slack ID to receive notifications."
+            exit 1
+          else
+            echo "slack_id=$CONTRIBUTOR" >> $GITHUB_OUTPUT
+          fi
 
-      #     echo "THIS_COMMIT: $THIS_COMMIT"
+      - name: Notify Slack
+        run: |
+          APP=$([[ ${{ inputs.os }} = "ios" ]] && echo ${{ env.AC_APP_IOS }} || echo ${{ env.AC_APP_ANDROID }})
 
-      #     GITHUB_AUTHOR=`gh api \
-      #       -H "Accept: application/vnd.github+json" \
-      #       /repos/nicolascavallin/warm_app/commits/${{ inputs.commit_id }} --jq '.author.login'`
-
-      #     SLACK_MESSAGE=`curl --write-out '%{http_code}' \
-      #         --silent \
-      #         --output /dev/null \
-      #         --request POST \
-      #         --header 'Content-Type: application/json' \
-      #         --url '${{ secrets.SLACK_URL }}' \
-      #         --data '{
-      #           "text": "Hello world branch: ${{ GITHUB_AUTHOR }}",
-      #         }'`
+          if [ ${{ inputs.status }} = "Succeeded" ]
+          then
+            SLACK_MESSAGE=`curl --write-out '%{http_code}' \
+                --silent \
+                --output /dev/null \
+                --request POST \
+                --header 'Content-Type: application/json' \
+                --url '${{ secrets.SLACK_WEBHOOK_URL }}' \
+                --data '{
+                  "text": ":white_check_mark:   *Build Succeeded*\n\nHey <@${{ steps.slack.outputs.slack_id }}>, your build for the \`${{ env.BRANCH_NAME }}\` branch is ready.\n\n<https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ $APP }}/build/branches/${{ inputs.branch }}/builds/${{ inputs.build_id }}|Here you can check the report> inside AppCenter.",
+                }'`          
+          else
+            SLACK_MESSAGE=`curl --write-out '%{http_code}' \
+                --silent \
+                --output /dev/null \
+                --request POST \
+                --header 'Content-Type: application/json' \
+                --url '${{ secrets.SLACK_WEBHOOK_URL }}' \
+                --data '{
+                  "text": ":x:   *Build Failed*\n\nHey <@${{ steps.slack.outputs.slack_id }}>, your build for the \`${{ env.BRANCH_NAME }}\` branch has failed.\n\n<https://appcenter.ms/orgs/${{ env.AC_USER }}/apps/${{ $APP }}/build/branches/${{ inputs.branch }}/builds/${{ inputs.build_id }}|Here you can check the report> inside AppCenter.",
+                }'`          
+          fi

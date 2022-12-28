@@ -29,7 +29,7 @@
 
 OS=$([[ -z ${APPCENTER_XCODE_PROJECT} && -z ${APPCENTER_XCODE_SCHEME} ]] && echo "android" || echo "ios")
 
-echo $OS
+# echo $OS
 
 # curl \
 #   -X POST \
